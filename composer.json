@@ -12,7 +12,9 @@
         "php": "^8.3",
         "ext-dom": "*",
         "ext-libxml": "*",
-        "illuminate/support": "^12.0"
+        "illuminate/support": "^12.0",
+        "revolution/salvager": "^2.1",
+        "symfony/dom-crawler": "^7.4||^8.0"
     },
     "require-dev": {
         "laravel/pint": "^1.25",
