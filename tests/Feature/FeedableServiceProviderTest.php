@@ -2,9 +2,13 @@
 
 declare(strict_types=1);
 
-test('FeedableServiceProvider registers build-in drivers', function (): void {
-    $environments = Boost::getCodeEnvironments();
+use Illuminate\Support\Facades\Route;
+use Revolution\Feedable\Drivers\JsonFeed\JsonFeedDriver;
+use Revolution\Feedable\Drivers\Laravel\LaravelBlogDriver;
 
-    expect($environments)->toHaveKey('copilot-cli')
-        ->and($environments['copilot-cli'])->toBe(CopilotCli::class);
+test('FeedableServiceProvider registers build-in drivers', function (): void {
+    $routes = Route::getRoutes();
+
+    expect($routes->getByAction(JsonFeedDriver::class)->uri())->toBe('jsonfeed')
+        ->and($routes->getByAction(LaravelBlogDriver::class)->uri())->toBe('laravel/blog.{format?}');
 });
