@@ -2,6 +2,7 @@
     "name": "revolution/feedable-core",
     "description": "Feedable core and build-in drivers",
     "keywords": [
+        "laravel",
         "feedable",
         "feed-generator"
     ],
