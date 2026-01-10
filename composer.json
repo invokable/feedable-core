@@ -1,0 +1,67 @@
+{
+    "name": "revolution/feedable-core",
+    "description": "Feedable core and build-in drivers",
+    "keywords": [
+        "feedable",
+        "feed-generator"
+    ],
+    "type": "library",
+    "license": "MIT",
+    "require": {
+        "php": "^8.3",
+        "ext-dom": "*",
+        "ext-libxml": "*",
+        "illuminate/support": "^12.0"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.25",
+        "orchestra/testbench": "^v10.8.0",
+        "pestphp/pest": "^4.1",
+        "mockery/mockery": "^1.6",
+        "pestphp/pest-plugin-laravel": "^4.0",
+        "revolution/laravel-boost-copilot-cli": "^1.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Revolution\\Feedable\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "kawax",
+            "email": "kawaxbiz@gmail.com"
+        },
+        {
+            "name": "puklipo"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Revolution\\Feedable\\FeedableServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "stable",
+    "scripts": {
+        "test": "pest",
+        "test:coverage": "pest --coverage --coverage-clover build/logs/clover.xml",
+        "lint": [
+            "pint"
+        ],
+        "test:lint": [
+            "pint --test"
+        ],
+        "boost": "vendor/bin/testbench boost:install --no-interaction --ansi"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    }
+}
