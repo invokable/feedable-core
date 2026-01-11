@@ -1,5 +1,9 @@
 # Feedable
 
+[![tests](https://github.com/invokable/feedable-core/actions/workflows/tests.yml/badge.svg)](https://github.com/invokable/feedable-core/actions/workflows/tests.yml)
+[![Maintainability](https://qlty.sh/gh/invokable/projects/feedable-core/maintainability.svg)](https://qlty.sh/gh/invokable/projects/feedable-core)
+[![Code Coverage](https://qlty.sh/gh/invokable/projects/feedable-core/coverage.svg)](https://qlty.sh/gh/invokable/projects/feedable-core)
+
 Feedableは [RSSHub](https://github.com/DIYgod/RSSHub) を参考にしたRSSフィード生成サービスです。RSSHubは日本向けサイトの登録が少ないので別途開発。
 
 RSSフィードを提供してないサイトからRSSを作りフィードリーダーで読めるようにします。
