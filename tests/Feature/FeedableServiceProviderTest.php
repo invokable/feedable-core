@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Route;
 use Revolution\Feedable\Drivers\JsonFeed\JsonFeedDriver;
 use Revolution\Feedable\Drivers\Laravel\LaravelBlogDriver;
 
-test('FeedableServiceProvider registers build-in drivers', function (): void {
+it('has built-in drivers', function (): void {
     $routes = Route::getRoutes();
 
     expect($routes->getByAction(JsonFeedDriver::class)->uri())->toBe('jsonfeed')

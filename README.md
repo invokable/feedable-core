@@ -49,6 +49,8 @@ https://github.com/invokable/feedable
 無料プラン・データベースなしでも動かせます。無料データベースでキャッシュ対応にもできます。  
 これが推奨する普通の使い方。
 
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Finvokable%2Ffeedable&env=APP_NAME,APP_KEY&envDefaults=%7B%22APP_NAME%22%3A%22Feedable%22%7D&envDescription=APP_KEY%20can%20be%20generated%20using%20the%20artisan%20command.&envLink=https%3A%2F%2Fgithub.com%2Finvokable%2Flaravel-vercel-installer%3Ftab%3Dreadme-ov-file%23env&demo-title=Feedable&demo-url=https%3A%2F%2Ffeedable-rss.vercel.app%2F&skippable-integrations=1)
+
 ### ドライバーを追加してLaravel Forgeや他のサーバーにデプロイする
 
 Playwrightが必要になるような特殊なドライバーを使いたい場合はLaravel Forgeなどで普通のサーバーにデプロイしてください。  

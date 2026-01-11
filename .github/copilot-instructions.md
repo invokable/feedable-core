@@ -1,4 +1,4 @@
-# Feedable core and build-in drivers - Project Guidelines
+# Feedable core and built-in drivers - Project Guidelines
 
 ## Project Overview
 
