@@ -126,11 +126,11 @@ use Revolution\Feedable\Core\Response\ResponseFactory;
 use Revolution\Feedable\Core\Enums\Format;
 
 Route::get('feed.{format?}', function (Format $format = Format::RSS) {
-return ResponseFactory::format($format)
-->make(
-    title: $title,
-    items: $items,
-);
+    return ResponseFactory::format($format)
+        ->make(
+            title: $title,
+            items: $items,
+        );
 });
 ```
 
