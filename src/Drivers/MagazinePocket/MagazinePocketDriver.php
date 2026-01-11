@@ -30,7 +30,7 @@ class MagazinePocketDriver implements FeedableDriver
             // 0時更新なので翌日までキャッシュ
             $items = cache()->remember(
                 'shonenmagazine-pocket-items',
-                Carbon::tomorrow(Timezone::AsiaTokyo->value),
+                today(Timezone::AsiaTokyo)->plus(days: 1),
                 fn () => $this->handle(),
             );
         } catch (Exception $e) {
