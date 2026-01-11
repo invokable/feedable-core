@@ -35,7 +35,7 @@ class JumpPlusDriver implements FeedableDriver
             // 0時更新なので翌日までキャッシュ
             $xml = cache()->remember(
                 'jump-plus-daily-rss',
-                Carbon::tomorrow(Timezone::AsiaTokyo->value),
+                today(Timezone::AsiaTokyo)->plus(days: 1),
                 fn () => $this->handle(),
             );
         } catch (Exception $e) {
