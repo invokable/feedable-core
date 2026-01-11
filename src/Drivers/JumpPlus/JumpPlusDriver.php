@@ -91,7 +91,7 @@ class JumpPlusDriver implements FeedableDriver
     {
         $response = Http::get($this->baseUrl)->throw();
 
-        if (app()->isLocal()) {
+        if (app()->runningUnitTests()) {
             Storage::put('jumpplus/daily.html', $response->body());
         }
 

@@ -103,7 +103,7 @@ class LaravelBlogDriver implements FeedableDriver
             throw new Exception;
         }
 
-        if (app()->isLocal()) {
+        if (app()->runningUnitTests()) {
             Storage::put('laravel/blog.html', $response->body());
         }
 

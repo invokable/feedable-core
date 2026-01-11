@@ -66,7 +66,7 @@ class MagazinePocketDriver implements FeedableDriver
             throw new Exception;
         }
 
-        if (app()->isLocal()) {
+        if (app()->runningUnitTests()) {
             Storage::put('pocket/home.html', $response->body());
         }
 

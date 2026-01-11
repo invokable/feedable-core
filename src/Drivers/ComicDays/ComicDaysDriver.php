@@ -71,7 +71,7 @@ class ComicDaysDriver implements FeedableDriver
             throw new Exception;
         }
 
-        if (app()->isLocal()) {
+        if (app()->runningUnitTests()) {
             Storage::put('comic-days/home.html', $response->body());
         }
 

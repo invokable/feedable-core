@@ -79,7 +79,7 @@ class FamitsuCategoryDriver implements FeedableDriver
             throw new Exception;
         }
 
-        if (app()->isLocal()) {
+        if (app()->runningUnitTests()) {
             Storage::put('famitsu/'.$this->category.'.json', $response->body());
         }
 
@@ -130,7 +130,7 @@ class FamitsuCategoryDriver implements FeedableDriver
                     return null;
                 }
 
-                if (app()->isLocal()) {
+                if (app()->runningUnitTests()) {
                     Storage::put('famitsu/'.data_get($item, 'articleId').'.json', $response->body());
                 }
 

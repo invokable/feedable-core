@@ -20,7 +20,7 @@ class {{ class }}ServiceProvider extends ServiceProvider
             url: 'https://',
             tags: ['sample'],
             description: <<<'MARKDOWN'
-これはサンプルのFeedableドライバーです。
+これはサンプルドライバーです。
 
 `/sample/sample.rss`や`/sample/sample.json`でフォーマットを指定できます。
 MARKDOWN,
