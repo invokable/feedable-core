@@ -88,7 +88,7 @@ class ComicDaysDriver implements FeedableDriver
         $firstSection = $sectionNodes->item(0);
         $linkNodes = $xpath->query('.//a[@class="gtm-top-days-original-item"]', $firstSection);
         $items = [];
-        $today = now(Timezone::AsiaTokyo->value)->setTime(12, 0, 0);
+        $today = now(Timezone::AsiaTokyo)->setTime(12, 0, 0);
 
         foreach ($linkNodes as $linkNode) {
             $link = $linkNode->getAttribute('href');
