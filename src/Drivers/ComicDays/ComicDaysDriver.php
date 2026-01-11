@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Revolution\Feedable\Drivers\ComicDays;
 
-use Carbon\Carbon;
 use DOMDocument;
 use DOMXPath;
 use Exception;
@@ -28,7 +27,7 @@ class ComicDaysDriver implements FeedableDriver
             // 12時更新なので翌日までキャッシュ
             $items = cache()->remember(
                 'comic-days-items',
-                Carbon::tomorrow(Timezone::AsiaTokyo->value)->addHours(12),
+                today(Timezone::AsiaTokyo)->plus(days: 1, hours: 12),
                 fn () => $this->handle(),
             );
         } catch (Exception $e) {
