@@ -7,6 +7,7 @@ namespace Revolution\Feedable;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
+use Revolution\Feedable\Console\DriverMakeCommand;
 
 class FeedableServiceProvider extends ServiceProvider
 {
@@ -17,6 +18,12 @@ class FeedableServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        if (class_exists(DriverMakeCommand::class)) {
+            $this->commands([
+                DriverMakeCommand::class,
+            ]);
+        }
+
         foreach ($this->drivers() as $driver) {
             $this->app->register($driver);
         }

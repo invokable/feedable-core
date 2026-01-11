@@ -1,0 +1,50 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{ namespace }};
+
+use Exception;
+use Illuminate\Contracts\Support\Responsable;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
+use Revolution\Feedable\Core\Contracts\FeedableDriver;
+use Revolution\Feedable\Core\Elements\FeedItem;
+use Revolution\Feedable\Core\Enums\Format;
+use Revolution\Feedable\Core\Enums\Timezone;
+use Revolution\Feedable\Core\Response\ErrorResponse;
+use Revolution\Feedable\Core\Response\ResponseFactory;
+
+class {{ class }}Driver implements FeedableDriver
+{
+    protected string $baseUrl = 'https://';
+
+    public function __invoke(Format $format = Format::RSS): Responsable
+    {
+        try {
+            $items = cache()->flexible(
+                'sample-items',
+                [now()->plus(hours: 1), now()->plus(hours: 2)],
+                fn () => $this->handle(),
+            );
+        } catch (Exception $e) {
+            return new ErrorResponse(
+                error: 'Whoops! Something went wrong.',
+                message: $e->getMessage(),
+            );
+        }
+
+        return ResponseFactory::format($format)->make(
+            title: 'サンプル',
+            home_page_url: $this->baseUrl,
+            feed_url: url()->current(),
+            description: 'サンプル',
+            items: $items,
+        );
+    }
+
+    public function handle(): array
+    {
+        //
+    }
+}

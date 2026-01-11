@@ -36,6 +36,14 @@ composer run lint          # Format code with Pint
 入口のルーティングから出口のレスポンスまで全てドライバーで制御可能。
 サイト毎に細かい調整が必要になることは分かっているので厳密なパターンは適用せず最大限の柔軟性を持たせる。
 
+### 内蔵ドライバー生成コマンド
+
+```shell
+vendor/bin/testbench make:driver Sample
+```
+
+`src/Drivers/Sample/SampleDriver.php`, `src/Drivers/Sample/SampleServiceProvider.php`, `tests/Feature/Drivers/SampleTest.php`が生成される。
+
 ### Service Provider
 
 ただのLaravelのService Provider。ルートを定義したりドライバー情報を登録する。
