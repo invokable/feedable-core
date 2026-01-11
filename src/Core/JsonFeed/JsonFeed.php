@@ -212,6 +212,10 @@ class JsonFeed
                 $feedItem['authors'] = [['name' => $this->getNodeValue($authorNode, 'name')]];
             }
 
+            if (empty($feedItem['id'])) {
+                continue;
+            }
+
             $feed['items'][] = array_filter($feedItem);
 
             if ($this->limit > 0 && count($feed['items']) >= $this->limit) {
