@@ -271,7 +271,7 @@ class JsonFeed
             }
         }
 
-        return null;
+        return $link;
     }
 
     /**
