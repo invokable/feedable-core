@@ -83,7 +83,7 @@ class MagazinePocketDriver implements FeedableDriver
 
         // 更新時間は0時のようなので今日の年＋今日の日付＋0時にする
         // 0時更新なので年跨ぎは不要なはず
-        $date = Carbon::create(now(Timezone::AsiaTokyo->value)->year, Str::before($dateText, '/'), Str::after($dateText, '/'), 0, 0, 0, timezone: Timezone::AsiaTokyo->value);
+        $date = Carbon::create(now(Timezone::AsiaTokyo)->year, Str::before($dateText, '/'), Str::after($dateText, '/'), 0, 0, 0, timezone: Timezone::AsiaTokyo->value);
 
         // <li class="p-index-update__item">が一作品分。更新作品にしかこのクラスは使われてないのでこれだけ取得すればいい
         $itemNodes = $xpath->query('//li[@class="p-index-update__item"]');
