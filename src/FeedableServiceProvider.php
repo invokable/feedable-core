@@ -7,7 +7,6 @@ namespace Revolution\Feedable;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
-use Symfony\Component\Finder\Finder;
 
 class FeedableServiceProvider extends ServiceProvider
 {
