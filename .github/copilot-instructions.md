@@ -26,6 +26,11 @@ composer run lint          # Format code with Pint
 - Drivers: Feedableに内蔵されているドライバー群。実態はLaravelのルートなので独自ドライバーを個別のcomposerパッケージとして配布も可能。
 - FeedableServiceProvider: 内蔵ドライバーを登録。
 
+## Testing
+
+ドライバーのテストではモックせずに実際のHTTPリクエストを使う。
+遅くなるけど対象サイトの構造の変化にすぐに気付けるようにするため。
+
 ## ドライバー
 各サイトのフィード生成コードはドライバーとして分離。
 入口のルーティングから出口のレスポンスまで全てドライバーで制御可能。
