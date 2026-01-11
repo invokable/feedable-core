@@ -14,8 +14,6 @@ class MirrorServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        // 本来のServiceProvider::register()はサービスコンテナの登録のみに使う。
-        // DriverはLaravelの機能を使ってないのでここでも使える。
         Driver::about(
             id: 'mirror',
             name: 'ミラー',
@@ -31,8 +29,6 @@ class MirrorServiceProvider extends ServiceProvider
          */
         Route::prefix('mirror')->group(function () {
             Route::get('/', function (Request $request) {
-                // info('mirror', Driver::get('mirror'));
-
                 $request->validate([
                     'rss' => 'required|url',
                 ]);
