@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Revolution\Feedable;
 
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Symfony\Component\Finder\Finder;
@@ -26,20 +27,21 @@ class FeedableServiceProvider extends ServiceProvider
     {
         $namespace = 'Revolution\\Feedable\\';
 
-        $paths = [
-            __DIR__.DIRECTORY_SEPARATOR.'Drivers',
-        ];
-
         $drivers = [];
 
-        foreach ((new Finder)->in($paths)->name('*ServiceProvider.php')->files() as $driver) {
-            $driver = $namespace.str_replace(
-                ['/', '.php'],
-                ['\\', ''],
-                Str::after($driver->getPathname(), 'src'.DIRECTORY_SEPARATOR),
-            );
+        foreach (File::glob(__DIR__.'/Drivers/*/*ServiceProvider.php') as $path) {
+            $driver = Str::of($path)
+                ->after('/src/')
+                ->replace(
+                    ['/', '.php'],
+                    ['\\', ''],
+                )
+                ->prepend($namespace)
+                ->value();
 
-            $drivers[] = $driver;
+            if (class_exists($driver)) {
+                $drivers[] = $driver;
+            }
         }
 
         return $drivers;
