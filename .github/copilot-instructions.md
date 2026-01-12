@@ -92,6 +92,7 @@ class SampleServiceProvider extends ServiceProvider
         });
 
         // 同じ動作にするにはmiddleware('web')を追加する。
+        // Format enumのバインディングを有効にするにはwebミドルウェアが必要なので内蔵ドライバーではほとんどで使用する。
         // CSRFなども適用されて外部からのポストが難しくなるのでドライバーの用途によっては注意が必要なので各ドライバーで工夫する。
         Route::middleware('web')->prefix('sample')->group(function () {
             Route::get('/', SampleDriver::class);
