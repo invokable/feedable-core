@@ -103,3 +103,22 @@ if (app()->runningUnitTests()) {
 ### タイムゾーンの扱い
 
 対象サイトのタイムゾーンが決まっている場合はドライバー側でタイムゾーンを指定する。Laravelのアプリケーション全体のタイムゾーン設定に依存しないようにする。
+
+Laravelの`now()`や`today()`ヘルパーはEnumをそのまま渡せる。
+`$now->copy()`はなるべく使わずに`now()`や`today()`を再度呼び出す。
+`addDays()`や`subDays()`は使わずに`->plus()`や`->minus()`を使う。
+```php
+use Revolution\Feedable\Core\Enums\Timezone;
+
+$now = now(Timezone::AsiaTokyo);
+$tomorrow = today(Timezone::UTC)->plus(days: 1, hours: 12);
+$yesterday = today(Timezone::UTC)->minus(days: 1);
+```
+
+CarbonではEnumを渡せないので`->value`を使用する。
+
+```php
+use Carbon\Carbon;
+
+Carbon::parse($time, timezone: Timezone::AsiaTokyo->value);
+```
