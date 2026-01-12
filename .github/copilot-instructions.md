@@ -31,6 +31,15 @@ composer run lint          # Format code with Pint
 ドライバーのテストではモックせずに実際のHTTPリクエストを使う。
 遅くなるけど対象サイトの構造の変化にすぐに気付けるようにするため。
 
+テスト実行時のみhtmlファイルをローカルに保存するコードをドライバーに追加しておく。
+```php
+if (app()->runningUnitTests()) {
+    Storage::put('sample/home.html', $response->body());
+}
+```
+
+通常のLaravelプロジェクトではないので実際の保存場所は `vendor/orchestra/testbench-core/laravel/storage/app/private/` の中。
+
 ## ドライバー
 各サイトのフィード生成コードはドライバーとして分離。
 入口のルーティングから出口のレスポンスまで全てドライバーで制御可能。
