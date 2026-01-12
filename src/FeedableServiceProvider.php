@@ -18,7 +18,7 @@ class FeedableServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        if (class_exists(DriverMakeCommand::class)) {
+        if ($this->app->runningInConsole() && class_exists(DriverMakeCommand::class)) {
             $this->commands([
                 DriverMakeCommand::class,
             ]);
@@ -33,9 +33,11 @@ class FeedableServiceProvider extends ServiceProvider
     {
         $namespace = 'Revolution\\Feedable\\';
 
+        $paths = File::glob(__DIR__.'/Drivers/*/*ServiceProvider.php');
+
         $drivers = [];
 
-        foreach (File::glob(__DIR__.'/Drivers/*/*ServiceProvider.php') as $path) {
+        foreach ($paths as $path) {
             $driver = Str::of($path)
                 ->after('/src/')
                 ->replace(
