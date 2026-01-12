@@ -16,12 +16,11 @@ class YomiuriServiceProvider extends ServiceProvider
     {
         Driver::about(
             id: 'yomiuri-news',
-            name: '読売新聞 ニュース速報',
+            name: '読売新聞 速報ニュース',
             url: 'https://www.yomiuri.co.jp/news/',
             tags: ['news', 'japan'],
             description: <<<'MARKDOWN'
-読売新聞ニュース速報一覧のRSSフィード。
-
+読売新聞 速報ニュース一覧のフィード。
 🔐マークは有料記事です。
 
 `/yomiuri/news.rss`や`/yomiuri/news.json`でフォーマットを指定できます。
