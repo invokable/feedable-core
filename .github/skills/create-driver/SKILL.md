@@ -11,7 +11,7 @@ LaravelのHTTPクライアントで取得できて単純なhtmlの解析だけ�
 
 JavaScriptで動的に生成されるサイトやログインが必要なサイトは対象外です。中断してユーザーの指示に従ってください。
 
-## ドライバー生成コマンド
+## 内蔵ドライバー生成コマンド
 
 ```shell
 vendor/bin/testbench make:driver Sample
