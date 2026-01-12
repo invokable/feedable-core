@@ -21,8 +21,7 @@ class AsahiServiceProvider extends ServiceProvider
             tags: ['news', 'japan'],
             description: <<<'MARKDOWN'
 朝日新聞デジタルの速報・新着ニュース一覧のフィード。
-
-昨日までの記事を含みます。
+🔐マークは有料記事です。
 
 `/asahi/news.rss`や`/asahi/news.json`でフォーマットを指定できます。
 MARKDOWN,
