@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Revolution\Feedable\Drivers\Asahi;
 
 use DOMDocument;
+use DOMNode;
 use DOMXPath;
 use Exception;
 use Illuminate\Contracts\Support\Responsable;
@@ -146,7 +147,7 @@ class AsahiNewsDriver implements FeedableDriver
     /**
      * アンカー要素からタイトルを抽出（Time spanなどを除く）
      */
-    protected function extractTitle(\DOMElement $anchor, DOMXPath $xpath): string
+    protected function extractTitle(DOMNode $anchor, DOMXPath $xpath): string
     {
         $title = '';
         foreach ($anchor->childNodes as $child) {
