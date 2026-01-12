@@ -131,7 +131,7 @@ class FamitsuCategoryDriver implements FeedableDriver
                 }
 
                 if (app()->runningUnitTests()) {
-                    Storage::put('famitsu/'.data_get($item, 'articleId').'.json', $response->body());
+                    Storage::put('famitsu/articles/'.data_get($item, 'articleId').'.json', $response->body());
                 }
 
                 $article = $response->collect('pageProps.articleDetailData');
