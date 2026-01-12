@@ -24,7 +24,7 @@ composer run lint          # Format code with Pint
 ## Architecture
 - Core: Feedableのコアヘルパー。ドライバーを作りやすいように用意しているけど独自ドライバーでの使用は必須ではない。
 - Drivers: Feedableに内蔵されているドライバー群。実態はLaravelのルートなので独自ドライバーを個別のcomposerパッケージとして配布も可能。
-- FeedableServiceProvider: 内蔵ドライバーを登録。
+- FeedableServiceProvider: 内蔵ドライバーを自動登録。
 
 ## Testing
 
