@@ -40,10 +40,10 @@ class YomiuriNewsDriver implements FeedableDriver
         }
 
         return ResponseFactory::format($format)->make(
-            title: '読売新聞 ニュース速報',
+            title: '読売新聞 速報ニュース',
             home_page_url: $this->feedUrl,
             feed_url: url()->current(),
-            description: '読売新聞のニュースサイト。速報ニュースを国内、スポーツ、政治、経済、国際、環境などジャンル別の記事で紹介。',
+            description: '読売新聞',
             items: $items,
         );
     }
