@@ -102,6 +102,11 @@ class AsahiNewsDriver implements FeedableDriver
             // タイトルはアンカー内のテキスト（Time spanより前の部分）
             $title = $this->extractTitle($anchor, $xpath);
 
+            $key_gold = $xpath->query('.//span[@class="KeyGold"]', $anchor)->count() > 0;
+            if ($key_gold) {
+                $title = '🔐 '.$title;
+            }
+
             $items[] = new FeedItem(
                 id: $url,
                 url: $url,
