@@ -1,4 +1,4 @@
-# Feedable
+# Feedable core and built-in drivers
 
 [![tests](https://github.com/invokable/feedable-core/actions/workflows/tests.yml/badge.svg)](https://github.com/invokable/feedable-core/actions/workflows/tests.yml)
 [![Maintainability](https://qlty.sh/gh/invokable/projects/feedable-core/maintainability.svg)](https://qlty.sh/gh/invokable/projects/feedable-core)
@@ -11,6 +11,12 @@ RSSフィードを提供してないサイトからRSSを作りフィードリ�
 ## Requirements
 - PHP >= 8.3
 - Laravel >= 12.x
+
+## Installation
+
+```shell
+composer require revolution/feedable-core
+```
 
 ## リクエスト募集中
 
