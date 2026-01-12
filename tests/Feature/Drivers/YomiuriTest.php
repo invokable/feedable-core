@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Revolution\Feedable\Drivers\Yomiuri\YomiuriDriver;
+use Revolution\Feedable\Drivers\Yomiuri\YomiuriNewsDriver;
 
 it('returns json feed', function (): void {
     $response = $this->getJson('/yomiuri/news.json');
@@ -33,7 +33,7 @@ it('returns rss feed', function (): void {
 });
 
 it('parses yomiuri news correctly', function (): void {
-    $driver = new YomiuriDriver;
+    $driver = new YomiuriNewsDriver;
 
     $items = $driver->handle();
 

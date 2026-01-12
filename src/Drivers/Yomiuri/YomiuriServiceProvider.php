@@ -36,7 +36,7 @@ MARKDOWN,
     public function boot(): void
     {
         Route::middleware('web')->prefix('yomiuri')->group(function () {
-            Route::get('news.{format?}', YomiuriDriver::class);
+            Route::get('news.{format?}', YomiuriNewsDriver::class);
         });
     }
 }

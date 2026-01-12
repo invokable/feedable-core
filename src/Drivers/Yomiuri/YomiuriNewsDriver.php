@@ -17,7 +17,7 @@ use Revolution\Feedable\Core\Response\ResponseFactory;
 use Revolution\Feedable\Core\Support\AbsoluteUri;
 use Symfony\Component\DomCrawler\Crawler;
 
-class YomiuriDriver implements FeedableDriver
+class YomiuriNewsDriver implements FeedableDriver
 {
     protected string $baseUrl = 'https://www.yomiuri.co.jp';
 
