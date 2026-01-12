@@ -76,8 +76,8 @@ class AsahiNewsDriver implements FeedableDriver
 
         $nodes = $xpath->query('.//li', $listNode);
         $items = [];
-        $now = Carbon::now(Timezone::AsiaTokyo->value);
-        $yesterday = $now->copy()->subDay()->startOfDay();
+        $now = now(Timezone::AsiaTokyo);
+        $yesterday = today(Timezone::AsiaTokyo)->minus(days: 1);
 
         foreach ($nodes as $node) {
             $anchor = $xpath->query('.//a', $node)->item(0);
