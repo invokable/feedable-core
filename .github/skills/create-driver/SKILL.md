@@ -26,3 +26,8 @@ vendor/bin/testbench make:driver Sample
 基本はLaravelのHTTPクライアントでhtmlを取得、PHP8.3用のDOMDocumentで解析、`handle()`はFeedItemの配列を返す形になります。
 
 内蔵ドライバーはほとんどResponseFactoryでRSSとJSON Feedに対応しているので`__invoke()`はテンプレートから少し変更するだけで完成です。
+
+### ServiceProvider
+
+- Format enumのルートバインディングはwebミドルウェアがないと無効なので`Route::middleware('web')`は残す。
+- ドライバーのServiceProviderはFeedableServiceProviderで自動登録されるので追加の作業は不要。
