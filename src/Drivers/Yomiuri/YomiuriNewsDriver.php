@@ -6,7 +6,6 @@ namespace Revolution\Feedable\Drivers\Yomiuri;
 
 use Exception;
 use Illuminate\Contracts\Support\Responsable;
-use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
