@@ -6,8 +6,10 @@ namespace Revolution\Feedable\Drivers\Yomiuri;
 
 use Exception;
 use Illuminate\Contracts\Support\Responsable;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 use Revolution\Feedable\Core\Contracts\FeedableDriver;
 use Revolution\Feedable\Core\Elements\FeedItem;
 use Revolution\Feedable\Core\Enums\Format;
@@ -47,11 +49,22 @@ class YomiuriNewsDriver implements FeedableDriver
         );
     }
 
+    /**
+     * @throws Exception
+     */
     public function handle(): array
     {
-        $html = Http::get($this->feedUrl)->body();
+        $response = Http::get($this->feedUrl);
 
-        $crawler = new Crawler($html);
+        if ($response->failed()) {
+            throw new Exception('Failed to fetch Yomiuri news page');
+        }
+
+        if (app()->runningUnitTests()) {
+            Storage::put('yomiuri/news.html', $response->body());
+        }
+
+        $crawler = new Crawler($response->body());
 
         $items = $crawler->filter('article.news-top-latest__list-item')->each(function (Crawler $node) {
             $titleNode = $node->filter('h3 a');
