@@ -26,20 +26,6 @@ composer run lint          # Format code with Pint
 - Drivers: Feedableに内蔵されているドライバー群。実態はLaravelのルートなので独自ドライバーを個別のcomposerパッケージとして配布も可能。
 - FeedableServiceProvider: 内蔵ドライバーを自動登録。
 
-## Testing
-
-ドライバーのテストではモックせずに実際のHTTPリクエストを使う。
-遅くなるけど対象サイトの構造の変化にすぐに気付けるようにするため。
-
-テスト実行時のみhtmlファイルをローカルに保存するコードをドライバーに追加しておく。
-```php
-if (app()->runningUnitTests()) {
-    Storage::put('sample/home.html', $response->body());
-}
-```
-
-通常のLaravelプロジェクトではないので実際の保存場所は `vendor/orchestra/testbench-core/laravel/storage/app/private/` の中。
-
 ## ドライバー
 各サイトのフィード生成コードはドライバーとして分離。
 入口のルーティングから出口のレスポンスまで全てドライバーで制御可能。
@@ -48,70 +34,9 @@ if (app()->runningUnitTests()) {
 手動でドライバーを作って来て仕様が固まって来たのでAIでドライバーを増やして行く段階。
 ドライバーを作る時は`create-driver`スキルを読み込む。
 
-### Service Provider
-
-ただのLaravelのService Provider。ルートを定義したりドライバー情報を登録する。
-
-```php
-
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\ServiceProvider;
-use Revolution\Feedable\Core\Driver;
-
-class SampleServiceProvider extends ServiceProvider
-{
-    public function register(): void
-    {
-        // 本来のServiceProvider::register()はサービスコンテナの登録のみに使う。
-        // DriverはLaravelの機能を使ってないのでここでも使える。
-        Driver::about(
-            id: 'sample-1',
-            name: 'サンプル1',
-            url: 'https://example.com/',
-            tags: ['example'],
-            description: 'サンプルドライバー',
-            example: '/sample',
-            language: 'ja',
-        );
-
-        // idさえ違っていれば複数のドライバー情報を登録可能
-        Driver::about(
-            id: 'sample-2',
-            name: 'サンプル2',
-            url: 'https://example.com/',
-            tags: ['example'],
-            description: 'サンプルドライバー',
-            example: '/sample/two',
-            language: 'ja',
-        );
-    }
-
-    public function boot(): void
-    {
-        // ルート定義
-        // 通常のroutes/web.phpのつもりで使うとwebミドルウェアが適用されてないので少し動作が違う場合がある。
-        Route::prefix('sample')->group(function () {
-            Route::get('/', SampleDriver::class);
-            Route::get('two', SampleTwoDriver::class);
-        });
-
-        // 同じ動作にするにはmiddleware('web')を追加する。
-        // Format enumのバインディングを有効にするにはwebミドルウェアが必要なので内蔵ドライバーではほとんどで使用する。
-        // CSRFなども適用されて外部からのポストが難しくなるのでドライバーの用途によっては注意が必要なので各ドライバーで工夫する。
-        Route::middleware('web')->prefix('sample')->group(function () {
-            Route::get('/', SampleDriver::class);
-        });
-    }
-}
-```
-
-### タイムゾーンの扱い
-
-対象サイトのタイムゾーンが決まっている場合はドライバー側でタイムゾーンを指定する。Laravelのアプリケーション全体のタイムゾーン設定に依存しないようにする。
-
 ## スクレイピング
 - LaravelのHTTPクライアント: これで取得できるなら一番簡単。
-- Playwright(`revolution/salvager`): JavaScriptで動的に生成されるページを取得する場合に使う。Vercelでは動かせない。
+- Playwright(`playwright-php/playwright`, `revolution/salvager`): JavaScriptで動的に生成されるページを取得する場合に使う。Vercelでは動かせない。
 - Cloudflare Browser Rendering: Vercelでも使えるはず。個別にAPIトークンの設定が必要。無料プランでは1日10分まで。
 
 ## HTML解析
