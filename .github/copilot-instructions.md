@@ -39,14 +39,6 @@ composer run lint          # Format code with Pint
 手動でドライバーを作って来て仕様が固まって来たのでAIでドライバーを増やして行く段階。
 ドライバーを作る時は`create-driver`スキルを読み込む。
 
-### 内蔵ドライバー生成コマンド
-
-```shell
-vendor/bin/testbench make:driver Sample
-```
-
-`src/Drivers/Sample/SampleDriver.php`, `src/Drivers/Sample/SampleServiceProvider.php`, `tests/Feature/Drivers/SampleTest.php`が生成される。
-
 ### Service Provider
 
 ただのLaravelのService Provider。ルートを定義したりドライバー情報を登録する。
