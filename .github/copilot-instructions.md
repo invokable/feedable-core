@@ -142,10 +142,10 @@ $xml = RSS::each($rss, function (DOMElement $item) {
 ほとんど同じ`Atom`クラスもある。
 
 ## デプロイ
-VervelへのデプロイはDBなしなら簡単だけどDBを使ってキャッシュが推奨。
-AWS RDSでDBを用意するかSupabaseなどの無料DBを使う。
+Vervelへのデプロイはデータベースなしなら簡単だけどデータベースを使ってキャッシュが推奨。
+AWS RDSでデータベースを用意するかSupabaseなどの無料データベースを使う。
 
-### SupabaseのDBを使う場合
+### Supabaseのデータベースを使う場合
 Vercelの環境設定で
 
 - `DB_URL`: SupabaseのPostgres接続URL。VercelではDirect connectionは使えないのでTransaction poolerのURLを指定する。
@@ -155,6 +155,12 @@ DB_URL=postgresql://postgres.*****:[YOUR-PASSWORD]@*****.pooler.supabase.com:654
 ```
 
 - `DB_CONNECTION`: `pgsql`
+
+### Laravel Cloudのデータベースを使う場合
+
+public endpointを有効にすればVercelから接続できるもののLaravel Cloudのウェブサーバーを使ったほうがいい。
+
+Laravel Forge+Laravel VPSのデータベースは外部から接続できないので使えない。
 
 ## カスタムドライバー
 
