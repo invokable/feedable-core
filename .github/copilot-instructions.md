@@ -90,9 +90,25 @@ Route::get('feed.{format?}', function (Format $format = Format::RSS) {
 
 `ErrorResponse`はエラー時のレスポンス。htmlを返す。RSSHubでは詳細なエラー画面を表示しているので後で拡張。
 
-### FeedItem
+### Elements/FeedItem
+
 JsonFeedやRSS2やAtomで共通のフィードアイテムオブジェクト。ドライバーで生成したデータをこのクラスに詰めてレスポンスに渡す。
-使わなくてもいいのでbladeでは`data_get()`を使ってarrayでもオブジェクトでもいいようにしている。
+使わなくてもいいのでRSS2用のbladeでは`data_get()`を使ってarrayでもオブジェクトでもいいようにしている。JSON FeedではFeedItemをほぼそのままjson化。
+
+### Elements/Author
+
+FeedItemのauthorsフィールド用のオブジェクトクラス。JSON Feedの仕様ではname, url, avatarを持つがnameしか使わないので以下のように使う。
+
+```php
+use Revolution\Feedable\Core\Elements\Author;
+use Revolution\Feedable\Core\Elements\FeedItem;
+
+return new FeedItem(
+    authors: [Author::make(name: $author)->toArray()],
+);
+```
+
+`authors: [$author]`にせず常に`Author`クラスを使う。
 
 ### FeedableDriver
 
