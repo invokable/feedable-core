@@ -35,7 +35,7 @@ class NicoMangaDriver implements FeedableDriver
             // 1日中更新かつ更新量が多いのでキャッシュ時間は短め
             // それでも取りこぼす場合はカテゴリーごとに読むのを推奨。
             $items = cache()->flexible(
-                'nicovideo-manga-items:'.$category->value,
+                'nicovideo-manga-items:'.$this->category,
                 [now()->plus(minutes: 10), now()->plus(minutes: 20)],
                 fn () => $this->handle(),
             );
@@ -47,7 +47,7 @@ class NicoMangaDriver implements FeedableDriver
         }
 
         return ResponseFactory::format($format)->make(
-            title: 'ニコニコ静画マンガ '.$category->value,
+            title: 'ニコニコ静画マンガ '.$this->category,
             home_page_url: $this->baseUrl,
             feed_url: url()->current(),
             description: 'ニコニコ静画マンガの最近更新された作品',
