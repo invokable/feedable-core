@@ -26,7 +26,7 @@ it('returns json feed', function (): void {
 });
 
 it('returns rss feed', function (): void {
-    $response = $this->get('/yomiuri/news.rss');
+    $response = $this->get('/yomiuri/news.rss?compact');
 
     $response->assertOk()
         ->assertHeader('Content-Type', 'application/xml; charset=UTF-8');

@@ -21,7 +21,7 @@ class YomiuriServiceProvider extends ServiceProvider
             tags: ['news', 'japan'],
             description: <<<'MARKDOWN'
 読売新聞 速報ニュース一覧のフィード。
-🔐マークは有料記事です。
+🔐マークは有料記事です。`/yomiuri/news?compact`で有料記事を除外できます。
 
 `/yomiuri/news.rss`や`/yomiuri/news.json`でフォーマットを指定できます。
 MARKDOWN,
