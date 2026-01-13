@@ -32,9 +32,11 @@ class NicoMangaDriver implements FeedableDriver
         $this->category = $category->value;
 
         try {
+            // 1日中更新かつ更新量が多いのでキャッシュ時間は短め
+            // それでも取りこぼす場合はカテゴリーごとに読むのを推奨。
             $items = cache()->flexible(
                 'nicovideo-manga-items',
-                [now()->plus(hours: 1), now()->plus(hours: 2)],
+                [now()->plus(minutes: 10), now()->plus(minutes: 20)],
                 fn () => $this->handle(),
             );
         } catch (Exception $e) {
