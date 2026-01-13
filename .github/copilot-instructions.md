@@ -1,16 +1,20 @@
 # Feedable core and built-in drivers - Project Guidelines
 
-## Project Overview
+## Overview
 
 RSSフィードを提供してないサイトからRSSを作るLaravelプロジェクト**Feedable**からコアヘルパーと内蔵ドライバーを分離したcomposerパッケージ。
 新規LaravelプロジェクトにこのパッケージをインストールすればFeedableと同じ機能が使える。
 フォークしたプロジェクトに独自ドライバーを追加して運用していくとフォーク元に追従するのが難しくなっていくのでパッケージにして更新しやすくする。
 
+### スターターキット
+
+https://github.com/invokable/feedable
+
 ## Technology Stack
 
 - **Language**: PHP 8.3+
 - **Framework**: Laravel 12.x+
-- **Testing**: Pest PHP 4.x
+- **Testing**: Pest PHP 4.x. Orchestra Testbench 10.x
 - **Code Quality**: Laravel Pint (PSR-12)
 - Vercel でデータベースなしでも動くようにする。`vercel-php`がまだPHP8.3しか使えないので8.3に制限。
 - Playwrightを使ったデータ取得もできるけどVercelでは動かすのが難しい。Laravel Forge向け。
@@ -19,12 +23,17 @@ RSSフィードを提供してないサイトからRSSを作るLaravelプロジ�
 ```bash
 composer run test          # Run all tests
 composer run lint          # Format code with Pint
+
+composer run serve        # Serve the application using the testbench/workbench local server
+# ルートは`workbench/routes/web.php`。対応サイトリストを表示するview部分はスターターキットが担当しているのでここではjsonを表示しているだけ。
 ```
 
 ## Architecture
-- Core: Feedableのコアヘルパー。ドライバーを作りやすいように用意しているけど独自ドライバーでの使用は必須ではない。
-- Drivers: Feedableに内蔵されているドライバー群。実態はLaravelのルートなので独自ドライバーを個別のcomposerパッケージとして配布も可能。
-- FeedableServiceProvider: 内蔵ドライバーを自動登録。
+- `src/Core/`: Feedableのコアヘルパー。ドライバーを作りやすいように用意しているけど独自ドライバーでの使用は必須ではない。
+- `src/Drivers/`: Feedableに内蔵されているドライバー群。実態はLaravelのルートなので独自ドライバーを個別のcomposerパッケージとして配布も可能。
+  - `src/Drivers/Sample/SampleDriver.php`: ドライバー本体。コントローラーと同じ役割。複数のドライバーを同じディレクトリに配置してもいい。
+  - `src/Drivers/Sample/SampleServiceProvider.php`: ドライバー情報とRouteを登録。
+- `src/FeedableServiceProvider.php`: 内蔵ドライバーを自動登録。
 
 ## ドライバー
 各サイトのフィード生成コードはドライバーとして分離。
