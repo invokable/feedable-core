@@ -22,3 +22,10 @@ it('returns json feed', function (): void {
             ],
         ]);
 });
+
+it('returns rss feed', function (): void {
+    $response = $this->get('/asahi/news.rss?compact');
+
+    $response->assertOk()
+        ->assertHeader('Content-Type', 'application/xml; charset=UTF-8');
+});

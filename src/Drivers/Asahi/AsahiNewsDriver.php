@@ -9,6 +9,7 @@ use DOMNode;
 use DOMXPath;
 use Exception;
 use Illuminate\Contracts\Support\Responsable;
+use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
@@ -24,8 +25,15 @@ class AsahiNewsDriver implements FeedableDriver
 {
     protected string $baseUrl = 'https://www.asahi.com';
 
-    public function __invoke(Format $format = Format::RSS): Responsable
+    /*
+     * 有料記事をフィードに含めるかどうか
+     */
+    protected bool $compact = false;
+
+    public function __invoke(Request $request, Format $format = Format::RSS): Responsable
     {
+        $this->compact = $request->has('compact');
+
         try {
             $items = cache()->flexible(
                 'asahi-news-items',
@@ -104,6 +112,10 @@ class AsahiNewsDriver implements FeedableDriver
 
             $key_gold = $xpath->query('.//span[@class="KeyGold"]', $anchor)->count() > 0;
             if ($key_gold) {
+                if ($this->compact) {
+                    continue;
+                }
+
                 $title = '🔐 '.$title;
             }
 
