@@ -13,7 +13,7 @@ class FeedableServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        //
+        $this->registerDrivers();
     }
 
     public function boot(): void
@@ -23,19 +23,16 @@ class FeedableServiceProvider extends ServiceProvider
                 DriverMakeCommand::class,
             ]);
         }
-
-        foreach ($this->drivers() as $driver) {
-            $this->app->register($driver);
-        }
     }
 
-    protected function drivers(): array
+    /**
+     * Auto register built-in drivers.
+     */
+    protected function registerDrivers(): void
     {
         $namespace = 'Revolution\\Feedable\\';
 
         $paths = File::glob(__DIR__.'/Drivers/*/*ServiceProvider.php');
-
-        $drivers = [];
 
         foreach ($paths as $path) {
             $driver = Str::of($path)
@@ -48,10 +45,8 @@ class FeedableServiceProvider extends ServiceProvider
                 ->value();
 
             if (class_exists($driver)) {
-                $drivers[] = $driver;
+                $this->app->register($driver);
             }
         }
-
-        return $drivers;
     }
 }
