@@ -12,11 +12,11 @@ https://github.com/invokable/feedable
 
 ## Technology Stack
 
-- **Language**: PHP 8.3+
+- **Language**: PHP 8.4+
 - **Framework**: Laravel 12.x+
 - **Testing**: Pest PHP 4.x. Orchestra Testbench 10.x
 - **Code Quality**: Laravel Pint (PSR-12)
-- Vercel でデータベースなしでも動くようにする。`vercel-php`がまだPHP8.3しか使えないので8.3に制限。
+- Vercel でデータベースなしでも動くようにする。~~`vercel-php`がまだPHP8.3しか使えないので8.3に制限。~~ PHP8.5まで対応したので制限を解除して8.4以上を対象にする。
 - Playwrightを使ったデータ取得もできるけどVercelでは動かすのが難しい。Laravel Forge向け。
 
 ## Commands

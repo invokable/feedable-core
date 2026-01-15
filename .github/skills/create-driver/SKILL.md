@@ -26,7 +26,7 @@ vendor/bin/testbench make:driver Sample
 
 ### Driver
 
-基本はLaravelのHTTPクライアントでhtmlを取得、PHP8.3用のDOMDocumentかSymfony DomCrawlerで解析、`handle()`はFeedItemの配列を返す形になります。
+基本はLaravelのHTTPクライアントでhtmlを取得、PHP8.4以降用の`Dom\HTMLDocument`かSymfony DomCrawlerで解析、`handle()`はFeedItemの配列を返す形になります。
 
 内蔵ドライバーはほとんどResponseFactoryでRSSとJSON Feedに対応しているので`__invoke()`はテンプレートから少し変更するだけで完成です。
 

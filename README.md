@@ -7,6 +7,16 @@
 Feedable is an RSS feed generation service inspired by [RSSHub](https://github.com/DIYgod/RSSHub).
 It allows you to create RSS feeds from websites that do not provide RSS feeds, enabling you to read them in your feed reader.
 
+## Requirements
+- PHP >= 8.4
+- Laravel >= 12.x
+
+## Installation
+
+```shell
+composer require revolution/feedable-core
+```
+
 ## Request Submissions Welcome
 
 This project is just getting started and we haven't decided which sites to support yet.

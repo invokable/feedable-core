@@ -121,7 +121,7 @@ class FamitsuCategoryDriver implements FeedableDriver
     protected function getArticle(array $item): FeedItem|array|null
     {
         return Cache::remember('famitsu_article_'.$this->buildId.'_'.data_get($item, 'articleId'),
-            now()->addDays(7),
+            now()->plus(days: 7),
             function () use ($item) {
                 $response = Http::baseUrl($this->baseUrl)
                     ->get("/_next/data/$this->buildId/article/".data_get($item, 'publicationDate').'/'.data_get($item, 'articleId').'.json');
@@ -142,14 +142,14 @@ class FamitsuCategoryDriver implements FeedableDriver
 
                 $description = $this->renderJson(data_get($article, 'content', []));
 
-                return (new FeedItem(
+                return new FeedItem(
                     id: data_get($item, 'link'),
                     url: data_get($item, 'link'),
                     title: data_get($item, 'title'),
                     content_html: $description,
                     date_published: data_get($item, 'pubDate'),
                     tags: data_get($item, 'categories'),
-                ))->when($authors->isNotEmpty(), fn (FeedItem $feedItem) => $feedItem->set('authors', $authors->toArray()))
+                )->when($authors->isNotEmpty(), fn (FeedItem $feedItem) => $feedItem->set('authors', $authors->toArray()))
                     ->when(filled($thumbnail), fn (FeedItem $feedItem) => $feedItem->tap(fn (FeedItem $item) => $item->image = $thumbnail));
             });
     }
@@ -158,19 +158,11 @@ class FamitsuCategoryDriver implements FeedableDriver
     {
         $response = Http::get($this->baseUrl);
 
-        // TODO: VercelがPHP8.4対応したらDom\HTMLDocumentのみに変更
-        if (PHP_VERSION_ID >= 80400) {
-            $html = HTMLDocument::createFromString(
-                source: $response->body(),
-                options: LIBXML_HTML_NOIMPLIED | LIBXML_NOERROR | HTML_NO_DEFAULT_NS,
-            );
-            $json = $html->querySelector('#__NEXT_DATA__')->innerHTML;
-        } else {
-            // PHP8.3以下の場合は旧DOMDocumentを使用
-            $dom = new \DOMDocument;
-            @$dom->loadHTML($response->body());
-            $json = $dom->getElementById('__NEXT_DATA__')->nodeValue;
-        }
+        $html = HTMLDocument::createFromString(
+            source: $response->body(),
+            options: LIBXML_HTML_NOIMPLIED | LIBXML_NOERROR | HTML_NO_DEFAULT_NS,
+        );
+        $json = $html->querySelector('#__NEXT_DATA__')->innerHTML;
 
         $this->buildId = data_get(json_decode($json, true), 'buildId');
     }
