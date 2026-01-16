@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace Revolution\Feedable\Drivers\Laravel;
 
 use Carbon\Carbon;
-use DOMDocument;
-use DOMXPath;
+use Dom\HTMLDocument;
 use Exception;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Support\Facades\Http;
@@ -107,9 +106,7 @@ class LaravelBlogDriver implements FeedableDriver
             Storage::put('laravel/blog.html', $response->body());
         }
 
-        $dom = new DOMDocument;
-        @$dom->loadHTML($response->body());
-        $xpath = new DOMXPath($dom);
+        $dom = HTMLDocument::createFromString($response->body(), LIBXML_NOERROR);
 
         /**
          * <div
@@ -119,12 +116,12 @@ class LaravelBlogDriver implements FeedableDriver
          * @posts-updated.window="setTimeout(() => $el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100)"
          * >
          */
-        $postsSection = $xpath->query('//div[@id="posts-section"]')->item(0);
+        $postsSection = $dom->querySelector('div#posts-section');
         if (! $postsSection) {
             throw new Exception;
         }
 
-        $nodes = $xpath->query('.//a', $postsSection);
+        $nodes = $postsSection->querySelectorAll('a');
         $items = [];
 
         foreach ($nodes as $node) {
@@ -135,12 +132,12 @@ class LaravelBlogDriver implements FeedableDriver
                 continue;
             }
 
-            $titleNode = $xpath->query('.//div[contains(@class, "order-1")]//span', $node)->item(0);
-            $categoryNode = $xpath->query('.//div[contains(@class, "order-2")]//span', $node)->item(0);
-            $dateNode = $xpath->query('.//div[contains(@class, "order-3")]//span', $node)->item(0);
+            $titleNode = $node->querySelector('div.order-1 span');
+            $categoryNode = $node->querySelector('div.order-2 span');
+            $dateNode = $node->querySelector('div.order-3 span');
             $title = trim($titleNode?->textContent ?? 'No title');
             $category = trim($categoryNode?->textContent ?? 'Uncategorized');
-            $dateText = trim($dateNode?->textContent) ?? '';
+            $dateText = trim($dateNode?->textContent ?? '') ?? '';
             $date = Carbon::parse($dateText, timezone: Timezone::UTC->value);
 
             $items[] = new FeedItem(

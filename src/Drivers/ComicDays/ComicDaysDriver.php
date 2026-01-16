@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace Revolution\Feedable\Drivers\ComicDays;
 
-use DOMDocument;
-use DOMXPath;
+use Dom\HTMLDocument;
 use Exception;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Support\Facades\Http;
@@ -75,25 +74,23 @@ class ComicDaysDriver implements FeedableDriver
             Storage::put('comic-days/home.html', $response->body());
         }
 
-        $dom = new DOMDocument;
-        @$dom->loadHTML($response->body());
-        $xpath = new DOMXPath($dom);
-        $sectionNodes = $xpath->query('//section[@id="days-original"]//div[starts-with(@id, "days-original-")]');
+        $dom = HTMLDocument::createFromString($response->body(), LIBXML_NOERROR);
+        $sectionNodes = $dom->querySelectorAll('section#days-original div[id^="days-original-"]');
 
         if ($sectionNodes->length === 0) {
             throw new Exception;
         }
 
         $firstSection = $sectionNodes->item(0);
-        $linkNodes = $xpath->query('.//a[@class="gtm-top-days-original-item"]', $firstSection);
+        $linkNodes = $firstSection->querySelectorAll('a.gtm-top-days-original-item');
         $items = [];
         $today = now(Timezone::AsiaTokyo)->setTime(12, 0, 0);
 
         foreach ($linkNodes as $linkNode) {
             $link = $linkNode->getAttribute('href');
-            $titleNode = $xpath->query('.//h3', $linkNode)->item(0);
-            $descriptionNode = $xpath->query('.//p', $linkNode)->item(0);
-            $imgNode = $xpath->query('.//img', $linkNode)->item(0);
+            $titleNode = $linkNode->querySelector('h3');
+            $descriptionNode = $linkNode->querySelector('p');
+            $imgNode = $linkNode->querySelector('img');
             $thumbnail = $imgNode?->getAttribute('src');
 
             $items[] = new FeedItem(

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Revolution\Feedable\Core\Support;
 
-use DOMDocument;
-use DOMElement;
-use DOMXPath;
+use Dom\Element;
+use Dom\XMLDocument;
+use Dom\XPath;
 
 /**
  * RSS manipulation helpers.
@@ -19,26 +19,20 @@ class RSS
      * Iterate over each <item> in the RSS feed XML and apply a callback function.
      *
      * @param  string  $xml  The RSS feed XML as a string.
-     * @param  callable(DOMElement $item): void  $callback  A callback function that takes a DOMElement representing an <item>.
+     * @param  callable(Element $item): void  $callback  A callback function that takes a Element representing an <item>.
      * @return string The modified RSS feed XML as a string.
      */
     public static function each(string $xml, callable $callback): string
     {
-        // TODO: VercelがPHP8.4対応したらDom\XMLDocumentに変更
-
-        $dom = new DOMDocument;
-        $dom->preserveWhiteSpace = false;
-        $dom->formatOutput = true;
-
-        $dom->loadXML($xml);
-        $xpath = new DOMXPath($dom);
+        $dom = XMLDocument::createFromString($xml);
+        $xpath = new XPath($dom);
         $items = $xpath->query(self::ITEM_XPATH);
 
         foreach ($items as $item) {
             $callback($item);
         }
 
-        return $dom->saveXML();
+        return $dom->saveXml();
     }
 
     /**
@@ -50,9 +44,9 @@ class RSS
      */
     public static function filterLinks(string $xml, array $links): string
     {
-        return static::each($xml, function (DOMElement $item) use ($links) {
+        return static::each($xml, function (Element $item) use ($links) {
             $linkNode = $item->getElementsByTagName('link')->item(0);
-            if ($linkNode && ! in_array($linkNode->nodeValue, $links, true)) {
+            if ($linkNode && ! in_array($linkNode->textContent, $links, true)) {
                 $item->parentNode->removeChild($item);
             }
         });
@@ -67,9 +61,9 @@ class RSS
      */
     public static function rejectLinks(string $xml, array $links): string
     {
-        return static::each($xml, function (DOMElement $item) use ($links) {
+        return static::each($xml, function (Element $item) use ($links) {
             $linkNode = $item->getElementsByTagName('link')->item(0);
-            if ($linkNode && in_array($linkNode->nodeValue, $links, true)) {
+            if ($linkNode && in_array($linkNode->textContent, $links, true)) {
                 $item->parentNode->removeChild($item);
             }
         });

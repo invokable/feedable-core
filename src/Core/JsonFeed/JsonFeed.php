@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Revolution\Feedable\Core\JsonFeed;
 
 use Carbon\Carbon;
-use DOMDocument;
-use DOMElement;
+use Dom\Element;
+use Dom\XMLDocument;
 use Exception;
 use Illuminate\Support\Str;
 use Revolution\Feedable\Core\Support\AbsoluteUri;
@@ -77,8 +77,7 @@ class JsonFeed
     {
         $body = $this->convertEncoding($body);
 
-        $doc = new DOMDocument;
-        $doc->loadXML($body);
+        $doc = XMLDocument::createFromString($body);
 
         $channel = $doc->getElementsByTagName('channel')->item(0);
 
@@ -94,7 +93,7 @@ class JsonFeed
         $items = $doc->getElementsByTagName('item');
 
         foreach ($items as $item) {
-            /** @var DOMElement $item */
+            /** @var Element $item */
             $feedItem = [
                 'id' => $item->getAttribute('rdf:about') ?: $this->getNodeValue($item, 'link'),
                 'url' => $this->getNodeValue($item, 'link'),
@@ -128,8 +127,7 @@ class JsonFeed
     {
         $body = $this->convertEncoding($body);
 
-        $doc = new DOMDocument;
-        $doc->loadXML($body);
+        $doc = XMLDocument::createFromString($body);
 
         $channel = $doc->getElementsByTagName('channel')->item(0);
 
@@ -172,8 +170,7 @@ class JsonFeed
 
     protected function atom(string $body): string
     {
-        $doc = new DOMDocument;
-        $doc->loadXML($body);
+        $doc = XMLDocument::createFromString($body);
 
         $feedElement = $doc->getElementsByTagName('feed')->item(0);
 
@@ -226,7 +223,7 @@ class JsonFeed
         return json_encode($feed, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
     }
 
-    protected function getNodeValue(DOMElement $parent, string $tagName): ?string
+    protected function getNodeValue(Element $parent, string $tagName): ?string
     {
         $nodes = $parent->getElementsByTagName($tagName);
         if ($nodes->length === 0) {
@@ -236,7 +233,7 @@ class JsonFeed
         return trim($nodes->item(0)->textContent) ?: null;
     }
 
-    protected function getNodeValueNS(DOMElement $parent, string $tagName, ?string $namespace = null): ?string
+    protected function getNodeValueNS(Element $parent, string $tagName, ?string $namespace = null): ?string
     {
         $nodes = $parent->getElementsByTagNameNS($namespace, $tagName);
         if ($nodes->length === 0) {
@@ -246,7 +243,7 @@ class JsonFeed
         return trim($nodes->item(0)->textContent) ?: null;
     }
 
-    protected function getAtomLink(DOMElement $parent, string $rel): ?string
+    protected function getAtomLink(Element $parent, string $rel): ?string
     {
         $links = $parent->getElementsByTagName('link');
         foreach ($links as $link) {
@@ -262,7 +259,7 @@ class JsonFeed
         return null;
     }
 
-    protected function getAtomEntryLink(DOMElement $parent, string $rel): ?string
+    protected function getAtomEntryLink(Element $parent, string $rel): ?string
     {
         $link = $this->getAtomLink($parent, $rel);
 
@@ -284,7 +281,7 @@ class JsonFeed
      * <media:content url="https://" type="image/jpeg" medium="image">
      * <media:thumbnail>https://</media:thumbnail>
      */
-    protected function getRss2Image(DOMElement $item): ?string
+    protected function getRss2Image(Element $item): ?string
     {
         // enclosure
         $enclosure = $item->getElementsByTagName('enclosure')->item(0);
@@ -317,7 +314,7 @@ class JsonFeed
      * Get image from Atom entry.
      * <link rel="enclosure" href="https://" length="0" type="image/jpeg" />
      */
-    protected function getAtomImage(DOMElement $entry): ?string
+    protected function getAtomImage(Element $entry): ?string
     {
         $links = $entry->getElementsByTagName('link');
         foreach ($links as $link) {
@@ -335,7 +332,7 @@ class JsonFeed
      *
      * @return array{content_text?: string, content_html?: string}
      */
-    protected function getAtomContent(DOMElement $entry): array
+    protected function getAtomContent(Element $entry): array
     {
         $contentNode = $entry->getElementsByTagName('content')->item(0);
         if (! $contentNode) {

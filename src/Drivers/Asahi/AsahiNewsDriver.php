@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Revolution\Feedable\Drivers\Asahi;
 
-use DOMDocument;
-use DOMNode;
-use DOMXPath;
+use Dom\HTMLDocument;
+use Dom\Node;
 use Exception;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Http\Request;
@@ -72,23 +71,21 @@ class AsahiNewsDriver implements FeedableDriver
             Storage::put('asahi/news.html', $response->body());
         }
 
-        $dom = new DOMDocument;
-        @$dom->loadHTML($response->body());
-        $xpath = new DOMXPath($dom);
+        $dom = HTMLDocument::createFromString($response->body(), LIBXML_NOERROR);
 
         // <ul class="List">内の<li>要素を取得
-        $listNode = $xpath->query('//ul[@class="List"]')->item(0);
+        $listNode = $dom->querySelector('ul.List');
         if (! $listNode) {
             throw new Exception('List element not found');
         }
 
-        $nodes = $xpath->query('.//li', $listNode);
+        $nodes = $listNode->querySelectorAll('li');
         $items = [];
         $now = now(Timezone::AsiaTokyo);
         $yesterday = today(Timezone::AsiaTokyo)->minus(days: 1);
 
         foreach ($nodes as $node) {
-            $anchor = $xpath->query('.//a', $node)->item(0);
+            $anchor = $node->querySelector('a');
             if (! $anchor) {
                 continue;
             }
@@ -97,7 +94,7 @@ class AsahiNewsDriver implements FeedableDriver
             $url = AbsoluteUri::resolve($this->baseUrl, $href);
 
             // <span class="Time">から日時を取得
-            $timeNode = $xpath->query('.//span[@class="Time"]', $anchor)->item(0);
+            $timeNode = $anchor->querySelector('span.Time');
             $timeText = trim($timeNode?->textContent ?? '');
 
             $date = $this->parseDateTime($timeText, $now);
@@ -108,9 +105,9 @@ class AsahiNewsDriver implements FeedableDriver
             }
 
             // タイトルはアンカー内のテキスト（Time spanより前の部分）
-            $title = $this->extractTitle($anchor, $xpath);
+            $title = $this->extractTitle($anchor);
 
-            $key_gold = $xpath->query('.//span[@class="KeyGold"]', $anchor)->count() > 0;
+            $key_gold = $anchor->querySelector('span.KeyGold') !== null;
             if ($key_gold) {
                 if ($this->compact) {
                     continue;
@@ -164,7 +161,7 @@ class AsahiNewsDriver implements FeedableDriver
     /**
      * アンカー要素からタイトルを抽出（Time spanなどを除く）
      */
-    protected function extractTitle(DOMNode $anchor, DOMXPath $xpath): string
+    protected function extractTitle(Node $anchor): string
     {
         $title = '';
         foreach ($anchor->childNodes as $child) {

@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace Revolution\Feedable\Drivers\MagazinePocket;
 
 use Carbon\Carbon;
-use DOMDocument;
-use DOMXPath;
+use Dom\HTMLDocument;
 use Exception;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Support\Facades\Http;
@@ -70,12 +69,10 @@ class MagazinePocketDriver implements FeedableDriver
             Storage::put('pocket/home.html', $response->body());
         }
 
-        $dom = new DOMDocument;
-        @$dom->loadHTML($response->body());
-        $xpath = new DOMXPath($dom);
+        $dom = HTMLDocument::createFromString($response->body(), LIBXML_NOERROR);
 
         // <span class="p-index-update__date p-index-sec__ttl">12/19</span>
-        $dateNode = $xpath->query('//span[contains(@class, "p-index-update__date")]')->item(0);
+        $dateNode = $dom->querySelector('span.p-index-update__date');
         if (! $dateNode) {
             throw new Exception;
         }
@@ -86,20 +83,20 @@ class MagazinePocketDriver implements FeedableDriver
         $date = Carbon::create(now(Timezone::AsiaTokyo)->year, Str::before($dateText, '/'), Str::after($dateText, '/'), 0, 0, 0, timezone: Timezone::AsiaTokyo->value);
 
         // <li class="p-index-update__item">が一作品分。更新作品にしかこのクラスは使われてないのでこれだけ取得すればいい
-        $itemNodes = $xpath->query('//li[@class="p-index-update__item"]');
+        $itemNodes = $dom->querySelectorAll('li.p-index-update__item');
         $items = [];
 
         foreach ($itemNodes as $itemNode) {
-            $url = $xpath->query('.//a', $itemNode)->item(0)->getAttribute('href');
+            $url = $itemNode->querySelector('a')?->getAttribute('href');
             $url = AbsoluteUri::resolve($this->baseUrl, $url);
 
-            $titleNode = $xpath->query('.//h3[@class="c-comic-item__ttl"]', $itemNode)->item(0);
+            $titleNode = $itemNode->querySelector('h3.c-comic-item__ttl');
             $title = $titleNode ? trim($titleNode->textContent) : 'No Title';
 
-            $descriptionNode = $xpath->query('.//div[@class="c-comic-item__description"]', $itemNode)->item(0);
+            $descriptionNode = $itemNode->querySelector('div.c-comic-item__description');
             $summary = $descriptionNode ? trim($descriptionNode->textContent) : '';
 
-            $imgNode = $xpath->query('.//img', $itemNode)->item(0);
+            $imgNode = $itemNode->querySelector('img');
             $image = $imgNode?->getAttribute('src');
 
             $items[] = new FeedItem(

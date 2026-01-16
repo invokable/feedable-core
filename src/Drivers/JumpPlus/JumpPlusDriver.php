@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace Revolution\Feedable\Drivers\JumpPlus;
 
 use Carbon\Carbon;
-use DOMDocument;
-use DOMElement;
-use DOMXPath;
+use Dom\Element;
+use Dom\HTMLDocument;
 use Exception;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Http\Response;
@@ -70,14 +69,14 @@ class JumpPlusDriver implements FeedableDriver
 
         // 元RSSのpubDateが変な時間なので日本時間0時に変更
         // 22日0時が<pubDate>Sun, 21 Dec 2025 15:00:00 +0000</pubDate>になっている
-        $rss = RSS::each($rss, function (DOMElement $node) {
+        $rss = RSS::each($rss, function (Element $node) {
             $pubDateNode = $node->getElementsByTagName('pubDate')->item(0);
             if ($pubDateNode) {
-                $pubDate = Carbon::parse($pubDateNode->nodeValue, Timezone::UTC->value)
+                $pubDate = Carbon::parse($pubDateNode->textContent, Timezone::UTC->value)
                     ->setTimezone(Timezone::AsiaTokyo->value)
                     ->startOfDay()
                     ->toRssString();
-                $pubDateNode->nodeValue = $pubDate;
+                $pubDateNode->textContent = $pubDate;
             }
         });
 
@@ -95,10 +94,8 @@ class JumpPlusDriver implements FeedableDriver
             Storage::put('jumpplus/daily.html', $response->body());
         }
 
-        $dom = new DOMDocument;
-        @$dom->loadHTML($response->body());
-        $xpath = new DOMXPath($dom);
-        $nodes = $xpath->query('//li[contains(@class, "daily-series-item")]/a');
+        $dom = HTMLDocument::createFromString($response->body(), LIBXML_NOERROR);
+        $nodes = $dom->querySelectorAll('li.daily-series-item a');
         $links = [];
         foreach ($nodes as $node) {
             $links[] = $node->getAttribute('href');

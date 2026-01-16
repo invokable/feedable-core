@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace Revolution\Feedable\Drivers\Nintendo;
 
-use DOMDocument;
-use DOMXPath;
+use Dom\HTMLDocument;
 use Exception;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Support\Carbon;
@@ -57,12 +56,10 @@ class DirectDriver implements FeedableDriver
          */
         $response = Http::get($this->baseUrl)->throw();
 
-        $redirect = new DOMDocument;
-        @$redirect->loadHTML($response->body());
-        $xpath = new DOMXPath($redirect);
-        $refresh = $xpath->query('//meta[@http-equiv="Refresh"]');
+        $redirect = HTMLDocument::createFromString($response->body(), LIBXML_NOERROR);
+        $refresh = $redirect->querySelector('meta[http-equiv="Refresh"]');
 
-        $content = $refresh->item(0)?->getAttribute('content') ?? '';
+        $content = $refresh?->getAttribute('content') ?? '';
         preg_match('/URL=(.+)$/', $content, $matches);
         if (! isset($matches[1])) {
             throw new Exception;
@@ -84,12 +81,10 @@ class DirectDriver implements FeedableDriver
 
         $response = Http::get($link)->throw();
 
-        $direct = new DOMDocument;
-        @$direct->loadHTML($response->body());
-        $xpath = new DOMXPath($direct);
+        $direct = HTMLDocument::createFromString($response->body(), LIBXML_NOERROR);
 
-        $descriptionNode = $xpath->query('//meta[@name="description"]');
-        $description = $descriptionNode->item(0)?->getAttribute('content');
+        $descriptionNode = $direct->querySelector('meta[name="description"]');
+        $description = $descriptionNode?->getAttribute('content');
 
         $title = $direct->getElementsByTagName('title')->item(0)?->textContent;
 
