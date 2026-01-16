@@ -65,6 +65,10 @@ class JumpPlusDriver implements FeedableDriver
         // 公式RSSから$linksに含まれてるURLだけ返す
         $response = Http::get($this->rssUrl)->throw();
 
+        if (app()->runningUnitTests()) {
+            Storage::put('jumpplus/original.rss', $response->body());
+        }
+
         $rss = RSS::filterLinks($response->body(), $links);
 
         // 元RSSのpubDateが変な時間なので日本時間0時に変更
