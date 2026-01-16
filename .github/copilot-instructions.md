@@ -41,7 +41,7 @@ composer run serve        # Serve the application using the testbench/workbench 
 サイト毎に細かい調整が必要になることは分かっているので厳密なパターンは適用せず最大限の柔軟性を持たせる。
 
 手動でドライバーを作って来て仕様が固まって来たのでAIでドライバーを増やして行く段階。
-ドライバーを作る時は`create-driver`スキルを読み込む。
+ドライバーを作ったり修正する時は`create-driver`スキルを読み込む。
 
 ## スクレイピング
 - LaravelのHTTPクライアント: これで取得できるなら一番簡単。
