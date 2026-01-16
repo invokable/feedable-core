@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Revolution\Feedable\Drivers\Nintendo;
 
+use const Dom\HTML_NO_DEFAULT_NS;
+
 use Dom\HTMLDocument;
 use Exception;
 use Illuminate\Contracts\Support\Responsable;
@@ -56,7 +58,10 @@ class DirectDriver implements FeedableDriver
          */
         $response = Http::get($this->baseUrl)->throw();
 
-        $redirect = HTMLDocument::createFromString($response->body(), LIBXML_NOERROR);
+        $redirect = HTMLDocument::createFromString(
+            source: $response->body(),
+            options: LIBXML_HTML_NOIMPLIED | LIBXML_NOERROR | HTML_NO_DEFAULT_NS
+        );
         $refresh = $redirect->querySelector('meta[http-equiv="Refresh"]');
 
         $content = $refresh?->getAttribute('content') ?? '';

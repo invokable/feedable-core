@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Revolution\Feedable\Drivers\JumpPlus;
 
+use const Dom\HTML_NO_DEFAULT_NS;
+
 use Carbon\Carbon;
 use Dom\Element;
 use Dom\HTMLDocument;
@@ -98,7 +100,10 @@ class JumpPlusDriver implements FeedableDriver
             Storage::put('jumpplus/daily.html', $response->body());
         }
 
-        $dom = HTMLDocument::createFromString($response->body(), LIBXML_NOERROR);
+        $dom = HTMLDocument::createFromString(
+            source: $response->body(),
+            options: LIBXML_HTML_NOIMPLIED | LIBXML_NOERROR | HTML_NO_DEFAULT_NS
+        );
         $nodes = $dom->querySelectorAll('li.daily-series-item a');
         $links = [];
         foreach ($nodes as $node) {

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Revolution\Feedable\Drivers\Asahi;
 
+use const Dom\HTML_NO_DEFAULT_NS;
+
 use Dom\HTMLDocument;
 use Dom\Node;
 use Exception;
@@ -71,7 +73,10 @@ class AsahiNewsDriver implements FeedableDriver
             Storage::put('asahi/news.html', $response->body());
         }
 
-        $dom = HTMLDocument::createFromString($response->body(), LIBXML_NOERROR);
+        $dom = HTMLDocument::createFromString(
+            source: $response->body(),
+            options: LIBXML_HTML_NOIMPLIED | LIBXML_NOERROR | HTML_NO_DEFAULT_NS
+        );
 
         // <ul class="List">内の<li>要素を取得
         $listNode = $dom->querySelector('ul.List');

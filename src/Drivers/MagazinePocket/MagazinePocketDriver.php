@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Revolution\Feedable\Drivers\MagazinePocket;
 
+use const Dom\HTML_NO_DEFAULT_NS;
+
 use Carbon\Carbon;
 use Dom\HTMLDocument;
 use Exception;
@@ -69,7 +71,10 @@ class MagazinePocketDriver implements FeedableDriver
             Storage::put('pocket/home.html', $response->body());
         }
 
-        $dom = HTMLDocument::createFromString($response->body(), LIBXML_NOERROR);
+        $dom = HTMLDocument::createFromString(
+            source: $response->body(),
+            options: LIBXML_HTML_NOIMPLIED | LIBXML_NOERROR | HTML_NO_DEFAULT_NS
+        );
 
         // <span class="p-index-update__date p-index-sec__ttl">12/19</span>
         $dateNode = $dom->querySelector('span.p-index-update__date');

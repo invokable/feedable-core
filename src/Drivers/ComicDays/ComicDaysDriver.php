@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Revolution\Feedable\Drivers\ComicDays;
 
+use const Dom\HTML_NO_DEFAULT_NS;
+
 use Dom\HTMLDocument;
 use Exception;
 use Illuminate\Contracts\Support\Responsable;
@@ -74,7 +76,11 @@ class ComicDaysDriver implements FeedableDriver
             Storage::put('comic-days/home.html', $response->body());
         }
 
-        $dom = HTMLDocument::createFromString($response->body(), LIBXML_NOERROR);
+        $dom = HTMLDocument::createFromString(
+            source: $response->body(),
+            options: LIBXML_HTML_NOIMPLIED | LIBXML_NOERROR | HTML_NO_DEFAULT_NS
+        );
+
         $sectionNodes = $dom->querySelectorAll('section#days-original div[id^="days-original-"]');
 
         if ($sectionNodes->length === 0) {
