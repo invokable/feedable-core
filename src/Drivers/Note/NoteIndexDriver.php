@@ -23,7 +23,7 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class NoteIndexDriver implements FeedableDriver
 {
-    protected string $baseUrl = 'https://note.com/';
+    protected string $baseUrl = 'https://example.com/';
 
     public function __invoke(Format $format = Format::RSS): Responsable
     {
