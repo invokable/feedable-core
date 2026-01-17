@@ -6,6 +6,7 @@ namespace Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 use Revolution\Feedable\FeedableServiceProvider;
+use Revolution\Salvager\Providers\SalvagerServiceProvider;
 
 abstract class TestCase extends OrchestraTestCase
 {
@@ -16,6 +17,9 @@ abstract class TestCase extends OrchestraTestCase
 
     protected function getPackageProviders($app): array
     {
-        return [FeedableServiceProvider::class];
+        return [
+            FeedableServiceProvider::class,
+            SalvagerServiceProvider::class,
+        ];
     }
 }

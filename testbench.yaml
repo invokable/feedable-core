@@ -7,6 +7,7 @@ env:
 providers:
   # - Workbench\App\Providers\WorkbenchServiceProvider
   - Revolution\Feedable\FeedableServiceProvider
+  - Revolution\Salvager\Providers\SalvagerServiceProvider
 
 migrations:
   - workbench/database/migrations

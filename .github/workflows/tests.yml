@@ -34,8 +34,18 @@ jobs:
       - name: Install dependencies
         run: composer install --prefer-dist --no-interaction --no-progress
 
+      - name: Install agent-browser
+        run: |
+          npm install -g agent-browser
+          npm install @sparticuz/chromium
+          node ./.github/scripts/install-chromium.js > /tmp/chromium_path.txt
+          cat /tmp/chromium_path.txt
+
       - name: Execute tests
         run: composer test:coverage
+        env:
+          AGENT_BROWSER_PATH: "agent-browser"
+          AGENT_BROWSER_EXECUTABLE_PATH: "/tmp/chromium"
 
       - name: Execute linter
         run: composer test:lint
