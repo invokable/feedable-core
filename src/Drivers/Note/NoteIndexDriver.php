@@ -53,6 +53,8 @@ class NoteIndexDriver implements FeedableDriver
     {
         // agent-browserで取得するサンプル。
         Salvager::agent(function (AgentBrowser $agent) use (&$html) {
+            $agent->close();
+
             // ブラウザで開く
             $agent->open($this->baseUrl);
             // ページの読み込み完了を待つ
