@@ -63,6 +63,8 @@ class NoteIndexDriver implements FeedableDriver
             // xpath=はXPathで要素を指定
             $html = $agent->html('css=body');
 
+            cache(['note-index-html' => $html], now()->plus(hours: 1));
+
             // ここで複雑なことはせずhtmlだけ取得してすぐに抜ける
 
             // ブラウザを閉じる
