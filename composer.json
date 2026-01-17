@@ -13,7 +13,7 @@
         "ext-dom": "*",
         "ext-libxml": "*",
         "illuminate/support": "^12.0",
-        "revolution/salvager": "^2.1",
+        "revolution/salvager": "^2.2",
         "symfony/dom-crawler": "^7.4||^8.0"
     },
     "require-dev": {
