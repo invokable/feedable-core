@@ -18,7 +18,7 @@ https://github.com/invokable/feedable
 - **Code Quality**: Laravel Pint (PSR-12)
 - Vercel でデータベースなしでも動くようにする。~~`vercel-php`がまだPHP8.3しか使えないので8.3に制限。~~ PHP8.5まで対応したので制限を解除して8.4以上を対象にする。
 - Playwrightを使ったデータ取得もできるけどVercelでは動かすのが難しい。Laravel Forge向け。
-- Vercel製のagent-browserがVercelのサーバーレス環境でも動くのでこれが使えるかもしれない。 https://github.com/vercel-labs/agent-browser
+- Vercel製のagent-browserがVercelのサーバーレス環境でも動くのでこれが使えるかもしれない。 https://github.com/vercel-labs/agent-browser →色々試したけどVercelではもう少しの所で動作しない。様子を見る。
 
 ## Commands
 ```bash
