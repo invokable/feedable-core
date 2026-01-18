@@ -42,5 +42,7 @@ MARKDOWN,
         Route::prefix('note')->group(function () {
             Route::post('post', NotePostDriver::class);
         });
+
+        // NoteIndexDriverは直接agent-browserを使う版。Vercelで使えるようになったら切り替え。
     }
 }
