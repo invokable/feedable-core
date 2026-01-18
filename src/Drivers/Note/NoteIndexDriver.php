@@ -30,7 +30,7 @@ class NoteIndexDriver implements FeedableDriver
         try {
             $items = cache()->flexible(
                 'note-index-items',
-                [now()->plus(minutes: 1), now()->plus(minutes: 2)],
+                [now()->plus(hours: 1), now()->plus(hours: 2)],
                 fn () => $this->handle(),
             );
         } catch (Exception $e) {
@@ -63,11 +63,9 @@ class NoteIndexDriver implements FeedableDriver
             // xpath=はXPathで要素を指定
             $html = $agent->html('css=body');
 
-            cache(['note-index-html' => $html], now()->plus(hours: 1));
-
             // ここで複雑なことはせずhtmlだけ取得してすぐに抜ける
 
-            // ブラウザを閉じる
+            // ブラウザを閉じる。省略化。
             $agent->close();
         });
 
