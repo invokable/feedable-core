@@ -285,7 +285,7 @@ class JsonFeed
     {
         // enclosure
         $enclosure = $item->getElementsByTagName('enclosure')->item(0);
-        if ($enclosure && str_starts_with($enclosure->getAttribute('type'), 'image/')) {
+        if ($enclosure && Str::startsWith($enclosure->getAttribute('type'), 'image/')) {
             return $enclosure->getAttribute('url') ?: null;
         }
 
@@ -318,7 +318,7 @@ class JsonFeed
     {
         $links = $entry->getElementsByTagName('link');
         foreach ($links as $link) {
-            if ($link->getAttribute('rel') === 'enclosure' && str_starts_with($link->getAttribute('type'), 'image/')) {
+            if ($link->getAttribute('rel') === 'enclosure' && Str::startsWith($link->getAttribute('type'), 'image/')) {
                 return $link->getAttribute('href') ?: null;
             }
         }
