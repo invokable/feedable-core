@@ -14,7 +14,7 @@ It allows you to create RSS feeds from websites that do not provide RSS feeds, e
 ## Installation
 
 ```shell
-composer require revolution/feedable-core
+composer require revolution/feedable-core:dev-main
 ```
 
 ## Request Submissions Welcome
