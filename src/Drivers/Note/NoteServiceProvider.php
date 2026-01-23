@@ -15,7 +15,7 @@ class NoteServiceProvider extends ServiceProvider
     public function register(): void
     {
         Driver::about(
-            id: 'node-index',
+            id: 'note-index',
             name: 'note 注目記事',
             url: 'https://note.com/',
             tags: ['blog'],
