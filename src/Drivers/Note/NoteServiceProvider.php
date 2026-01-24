@@ -35,14 +35,25 @@ MARKDOWN,
     public function boot(): void
     {
         Route::middleware('web')->prefix('note')->group(function () {
-            Route::get('index.{format?}', NoteCacheDriver::class);
+            Route::get('index.{format?}', NoteIndexDriver::class);
         });
 
-        // agent-browserがまだVercelで動かないのでGitHub Actionsで実行してここで受け取ってキャッシュから返す方式
-        Route::prefix('note')->group(function () {
-            Route::post('post', NotePostDriver::class);
-        });
+        // agent-browserとCloud provider(Browserbase)でVercelでも動かせたので元のNoteIndexDriverに切り替え。キャッシュ方式はサンプルとして残す。
+        // Browserbaseには無料枠が月1時間分あるけどそれ以上に使いたいような場合はGitHub ActionsでChromiumを直接使う。
 
-        // NoteIndexDriverは直接agent-browserを使う版。Vercelで使えるようになったら切り替え。
+        // GitHub Actionsからこのルートにポスト。
+        // Route::prefix('note')->group(function () {
+        //     Route::post('post', NotePostDriver::class);
+        // });
+        // キャッシュからフィードを返す。
+        // Route::middleware('web')->prefix('note')->group(function () {
+        //     Route::get('index.{format?}', NoteCacheDriver::class);
+        // });
+        //
+        // GitHub Actionsはこれを参考に設定。
+        // https://github.com/invokable/feedable/blob/main/.github/workflows/note.yml
+        // GitHub Actionsで実行するコマンドはこれ
+        // https://github.com/invokable/feedable/blob/main/app/Console/Commands/NoteCommand.php
+        // 実際にはもう動かしてないので後から見たら参考にならないかもしれないので注意。
     }
 }

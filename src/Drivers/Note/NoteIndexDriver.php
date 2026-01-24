@@ -30,7 +30,7 @@ class NoteIndexDriver implements FeedableDriver
         try {
             $items = cache()->flexible(
                 'note-index-items',
-                [now()->plus(hours: 1), now()->plus(hours: 2)],
+                [now()->plus(hours: 24), now()->plus(hours: 25)],
                 fn () => $this->handle(),
             );
         } catch (Exception $e) {
