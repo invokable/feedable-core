@@ -17,8 +17,7 @@ https://github.com/invokable/feedable
 - **Testing**: Pest PHP 4.x. Orchestra Testbench 10.x
 - **Code Quality**: Laravel Pint (PSR-12)
 - Vercel でデータベースなしでも動くようにする。~~`vercel-php`がまだPHP8.3しか使えないので8.3に制限。~~ PHP8.5まで対応したので制限を解除して8.4以上を対象にする。
-- Playwrightを使ったデータ取得もできるけどVercelでは動かすのが難しい。Laravel Forge向け。
-- Vercel製のagent-browserがVercelのサーバーレス環境でも動くのでこれが使えるかもしれない。 https://github.com/vercel-labs/agent-browser →色々試したけどVercelではもう少しの所で動作しない。様子を見る。
+- Vercel製の[agent-browser](https://github.com/vercel-labs/agent-browser)とCloud provider [Browserbase](https://www.browserbase.com/) の組み合わせならVercelでも動かせてリアルブラウザでのスクレイピングが可能。
 
 ## Commands
 ```bash
@@ -46,6 +45,7 @@ composer run serve        # Serve the application using the testbench/workbench 
 
 ## スクレイピング
 - LaravelのHTTPクライアント: これで取得できるなら一番簡単。
+- agent-browser + Browserbase: Vercelでも動かせるのでブラウザが必要な場合はこれをメインに対応。Browserbaseは無料プランでは月1時間まで。htmlだけ取得してすぐ終了すれば20秒程度なのでキャッシュ時間を長くすれば十分使えるはず。
 - Playwright(`playwright-php/playwright`, `revolution/salvager`): JavaScriptで動的に生成されるページを取得する場合に使う。Vercelでは動かせない。
 - Cloudflare Browser Rendering: Vercelでも使えるはず。個別にAPIトークンの設定が必要。無料プランでは1日10分まで。
 
@@ -158,6 +158,62 @@ $xml = RSS::each($rss, function (DOMElement $item) {
 
 ほとんど同じ`Atom`クラスもある。
 
+## agent-browser + Browserbase
+
+Vercelでも使える方法は現状では多分これだけ。
+
+Laravelのプロジェクトレベルでagent-browserをインストール。package.jsonの`dependencies`はagent-browserのみにし、他は`devDependencies`に移動する。
+```shell
+npm install agent-browser
+```
+
+composer.jsonのscriptsセクションにVercel用のビルドコマンドを追加。通常のアセットビルドの後にdevを除いて再度インストールする。これでagent-browserのみがインストールされる。全部含めると250MBのサイズ制限でエラーになる。
+```json
+        "vercel": [
+            "@php artisan optimize",
+            "@php artisan migrate --force",
+            "npm install",
+            "npm run build",
+            "npm install --omit=dev"
+        ],
+```
+
+vercel.jsonの設定も重要。
+excludeFilesを設定しつつ`node_modules/**`を含めない。vercel-phpのデフォルトはnode_modulesを除外するのでこう設定しないとインストールしたagent-browserが残らない。
+```json
+    "builds": [
+        {
+            "src": "/api/index.php",
+            "use": "vercel-php@0.9.0",
+            "config": {
+                "excludeFiles": [
+                    ".git/**",
+                    "tests/**",
+                    "*.md",
+                    "vercel.json",
+                    ".vercelignore"
+                ]
+            }
+        },
+```
+
+プロジェクトローカルのagent-browserを使うための`npx agent-browser`、socket用の一時ディレクトリをenvで指定。AGENT_BROWSER_SOCKET_DIRはVercelやLambdaでしか必要になりそうにない設定。
+```json
+    "env": {
+        "SALVAGER_AGENT_BROWSER_PATH": "npx agent-browser",
+        "AGENT_BROWSER_SOCKET_DIR": "/tmp/"
+    }
+```
+実際に動いてるvercel.jsonはここ。
+https://github.com/invokable/feedable/blob/main/vercel.json
+
+VercelのEnvironment Variablesでは以下を設定。AGENT_BROWSER_PROVIDERはvercel.jsonでもいい。
+```dotenv
+AGENT_BROWSER_PROVIDER=browserbase
+BROWSERBASE_PROJECT_ID=
+BROWSERBASE_API_KEY=
+```
+
 ## デプロイ
 Vervelへのデプロイはデータベースなしなら簡単だけどデータベースを使ってキャッシュが推奨。
 AWS RDSでデータベースを用意するかSupabaseなどの無料データベースを使う。
@@ -186,22 +242,3 @@ Laravel Forge+Laravel VPSのデータベースは外部から接続できない�
 composerパッケージとして作る場合はServiceProviderでルートを登録。
 
 `Driver::about()`でドライバー情報を登録。対応サイトリストに表示するための情報なので登録しなくても使える。
-
-### Playwright を使いたい場合の実装テクニック
-- Playwrightを使う部分をartisanコマンドとして作成。コマンドをGitHub Actionsで定期実行。コマンドからVercel側にデータをポスト。
-- Vercel側では受け取ったデータをCache::forever()で永遠にキャッシュ。表示時はキャッシュを表示するだけ。
-- これならPlaywrightを動かすのはGitHub Actions側だけでVercel側にはPlaywrightをインストールする必要がない。
-
-GitHub Actionsワークフローの例。
-```yaml
-      - uses: playwright-php/setup-playwright@main
-        with:
-          browsers: chrome
-
-      - name: Install Playwright Dependencies
-        run: vendor/bin/playwright-install --with-deps
-
-      - name: Run Command
-        run: php artisan your:playwright-command
-```
-https://github.com/playwright-php/setup-playwright
