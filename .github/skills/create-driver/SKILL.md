@@ -9,7 +9,7 @@ description: Guide for creating a built-in driver for Feedable. Use this when yo
 
 LaravelのHTTPクライアントで取得できて単純なhtmlの解析だけで対応できるサイトならドライバーを作成します。
 
-JavaScriptで動的に生成されるサイトやログインが必要なサイトは対象外です。中断してユーザーの指示に従ってください。
+JavaScriptで動的に生成されるサイトやログインが必要なサイトは対象外です。`agent-browser`で取得はできますが一旦中断してユーザーの指示に従ってください。
 
 ## 内蔵ドライバー生成コマンド
 
