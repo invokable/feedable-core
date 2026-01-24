@@ -69,7 +69,7 @@ class NoteIndexDriver implements FeedableDriver
             $agent->close();
         });
 
-        if (app()->runningUnitTests()) {
+        if (app()->runningUnitTests() && ! empty($html)) {
             Storage::put('note/index.html', $html);
         }
 

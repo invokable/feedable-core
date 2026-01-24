@@ -2,7 +2,11 @@
 
 declare(strict_types=1);
 
+use Revolution\Salvager\Facades\Salvager;
+
 it('returns json feed', function (): void {
+    Salvager::expects('agent')->once();
+
     $response = $this->getJson('/note/index.json');
 
     $response->assertOk();
