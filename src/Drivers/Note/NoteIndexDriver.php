@@ -66,7 +66,7 @@ class NoteIndexDriver implements FeedableDriver
             // ここで複雑なことはせずhtmlだけ取得してすぐに抜ける
 
             // ブラウザを閉じる。省略化。
-            $agent->close();
+            // $agent->close();
         });
 
         if (app()->runningUnitTests() && ! empty($html)) {
