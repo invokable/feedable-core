@@ -76,6 +76,8 @@ class JsonFeed
     protected function rdf(string $body): string
     {
         $body = $this->convertEncoding($body);
+        // エスケープされてない「&」を置換
+        $body = preg_replace('/&(?!#?[a-z0-9]+;)/', '&amp;', $body);
 
         $doc = XMLDocument::createFromString($body);
 
