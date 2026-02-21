@@ -12,7 +12,7 @@
         "php": "^8.4",
         "ext-dom": "*",
         "ext-libxml": "*",
-        "illuminate/support": "^12.0",
+        "illuminate/support": "^12.0||^13.0",
         "revolution/salvager": "^2.2",
         "symfony/dom-crawler": "^7.4||^8.0"
     },
