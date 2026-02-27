@@ -56,7 +56,7 @@ class NoteIndexDriver implements FeedableDriver
             // ブラウザで開く
             $agent->open($this->baseUrl);
             // ページの読み込み完了を待つ
-            $agent->run('wait --load networkidle');
+            $agent->run('wait --load domcontentloaded');
 
             // HTMLを取得
             // css=はCSSセレクタで要素を指定できる
