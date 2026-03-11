@@ -6,6 +6,7 @@ namespace Revolution\Feedable\Core\Response;
 
 use Carbon\Carbon;
 use Illuminate\Contracts\Support\Responsable;
+use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\File;
@@ -30,7 +31,7 @@ readonly class Rss2Response implements Responsable
     /**
      * Create an HTTP response that represents the object.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  Request  $request
      */
     public function toResponse($request): Response
     {

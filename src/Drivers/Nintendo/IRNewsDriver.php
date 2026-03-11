@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Revolution\Feedable\Drivers\Nintendo;
 
+use Dom\Element;
 use Dom\XMLDocument;
 use Exception;
 use Illuminate\Contracts\Support\Responsable;
@@ -68,7 +69,7 @@ class IRNewsDriver implements FeedableDriver
 
         $items = [];
         foreach ($xmlItems as $item) {
-            /** @var \Dom\Element $item */
+            /** @var Element $item */
             $title = $item->getElementsByTagName('name_main')->item(0)?->textContent;
             if (empty($title)) {
                 // item内の<sub_links><item>だった場合はスキップ
