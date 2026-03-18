@@ -59,9 +59,8 @@ class NoteIndexDriver implements FeedableDriver
             $agent->run('wait --load domcontentloaded');
 
             // HTMLを取得
-            // css=はCSSセレクタで要素を指定できる
-            // xpath=はXPathで要素を指定
-            $html = $agent->html('css=body');
+            // agent-browserのアップデートで使い方が変わるのでCSSセレクタでの指定が安定。
+            $html = $agent->html('body');
 
             // ここで複雑なことはせずhtmlだけ取得してすぐに抜ける
 
