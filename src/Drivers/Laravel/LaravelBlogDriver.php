@@ -12,14 +12,14 @@ use Exception;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
+use Illuminate\Support\Uri;
 use Revolution\Feedable\Core\Contracts\FeedableDriver;
+use Revolution\Feedable\Core\Elements\Author;
 use Revolution\Feedable\Core\Elements\FeedItem;
 use Revolution\Feedable\Core\Enums\Format;
 use Revolution\Feedable\Core\Enums\Timezone;
 use Revolution\Feedable\Core\Response\ErrorResponse;
 use Revolution\Feedable\Core\Response\ResponseFactory;
-use Revolution\Feedable\Core\Support\AbsoluteUri;
 
 class LaravelBlogDriver implements FeedableDriver
 {
@@ -57,46 +57,25 @@ class LaravelBlogDriver implements FeedableDriver
     public function handle(): array
     {
         /**
-         * Timezoneはアメリカだろうけど時間は表示されてないし、厳密に扱う必要はないのでUTC。
+         * Laravel 13リリースに合わせてLivewireからInertiaに移行された。
+         * 記事データは<script data-page="app" type="application/json">内のJSONに含まれている。
+         * props.posts.dataに記事の配列があり、各記事は以下のフィールドを持つ:
+         * id, title, slug, excerpt, published_at_iso, category.name, authors[].name, image_url
          *
-         * リンクのみで本文は含めない。
-         *
-         * Laravel公式なのでLivewireが使われている。
-         * htmlで取得できるけど難しいのはtailwindばかりで特徴的なidやclass名がほとんどないこと。
-         * <div id="posts-section">内のa要素を集めればいいはず。posts-section内のカテゴリーはbuttonで実装してる。
+         * highlightedPostやfeaturedPostsもあるがposts.dataに含まれているので重複なし。
          *
          * 一記事分の構造例:
-         * <a
-         * href="/blog/open-source-as-a-way-of-giving-back-the-artisan-of-the-day-is-daniel-petrica"
-         * class="cursor-pointer py-4 md:py-10 px-4 xl:px-16 relative group hover:bg-white
-         * border-b border-transparent hover:border-sand-light-7
-         * flex flex-col lg:flex-row gap-2 lg:gap-8 z-10
-         * transition-colors"
-         * >
-         * <!-- title: first on mobile, left on desktop -->
-         * <div class="order-1 lg:order-1 flex-1">
-         * <span class="text-sand-light-12 text-balance text-base font-medium leading-normal group-hover:text-black transition-colors" style="text-wrap: balance;">
-         * Open Source as a Way of Giving Back: The Artisan of the Day Is Daniel&nbsp;Petrica.
-         * </span>
-         * </div>
-         *
-         * <!-- category: second on mobile, left on desktop -->
-         * <div class="order-2 lg:order-2 mb-1 lg:mb-0 lg:w-40">
-         * <span class="text-sand-light-11 text-base font-medium leading-normal">
-         * Community
-         * </span>
-         * <span class="inline-block ml-8 md:hidden text-sand-light-11 text-nowrap text-base font-medium leading-normal">
-         * December 19, 2025
-         * </span>
-         * </div>
-         *
-         * <!-- date: third on mobile, right on desktop -->
-         * <div class="hidden md:block order-3 lg:order-3 lg:w-32 lg:text-right">
-         * <span class="text-sand-light-11 text-nowrap text-base font-medium leading-normal">
-         * December 19, 2025
-         * </span>
-         * </div>
-         * </a>
+         * {
+         *   "id": 431,
+         *   "title": "Which AI Model Is Best for Laravel?",
+         *   "slug": "which-ai-model-is-best-for-laravel",
+         *   "excerpt": "We benchmarked 6 AI models on 17 real Laravel tasks...",
+         *   "published_at": "Mar 18, 2026",
+         *   "published_at_iso": "2026-03-18T14:47:42.000000Z",
+         *   "image_url": "https://...png",
+         *   "category": {"name": "Laravel Framework", "slug": "laravel-framework"},
+         *   "authors": [{"name": "Pushpak Chhajed"}]
+         * }
          */
         $response = Http::get($this->baseUrl);
 
@@ -113,44 +92,33 @@ class LaravelBlogDriver implements FeedableDriver
             options: LIBXML_HTML_NOIMPLIED | LIBXML_NOERROR | HTML_NO_DEFAULT_NS
         );
 
-        /**
-         * <div
-         * id="posts-section"
-         * x-data
-         *
-         * @posts-updated.window="setTimeout(() => $el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100)"
-         * >
-         */
-        $postsSection = $dom->querySelector('div#posts-section');
-        if (! $postsSection) {
+        // Inertiaのページデータを取得
+        $script = $dom->querySelector('script[data-page="app"]');
+        if (! $script) {
             throw new Exception;
         }
 
-        $nodes = $postsSection->querySelectorAll('a');
+        $pageData = json_decode($script->textContent, associative: true);
+        $posts = data_get($pageData, 'props.posts.data', []);
         $items = [];
 
-        foreach ($nodes as $node) {
-            $url = AbsoluteUri::resolve($this->baseUrl, $node->getAttribute('href'));
-
-            if (Str::contains($url, '/blog/category/')) {
-                // カテゴリーページへのリンクはスキップ
-                continue;
-            }
-
-            $titleNode = $node->querySelector('div.order-1 span');
-            $categoryNode = $node->querySelector('div.order-2 span');
-            $dateNode = $node->querySelector('div.order-3 span');
-            $title = trim($titleNode?->textContent ?? 'No title');
-            $category = trim($categoryNode?->textContent ?? 'Uncategorized');
-            $dateText = trim($dateNode?->textContent ?? '') ?? '';
-            $date = Carbon::parse($dateText, timezone: Timezone::UTC->value);
+        foreach ($posts as $post) {
+            $url = Uri::of('https://laravel.com')->withPath('blog/'.$post['slug'])->value();
+            $title = trim($post['title'] ?? 'No title');
+            $category = data_get($post, 'category.name', 'Uncategorized');
+            $authors = collect(data_get($post, 'authors', []))
+                ->map(fn (array $author) => Author::make(name: $author['name'])->toArray())
+                ->all();
+            $date = Carbon::parse($post['published_at_iso'], timezone: Timezone::UTC->value);
 
             $items[] = new FeedItem(
                 id: $url,
                 url: $url,
                 title: $title,
-                summary: "[$category] $title",
+                summary: trim($post['excerpt'] ?? "[$category] $title"),
+                image: $post['image_url'] ?? null,
                 date_published: $date,
+                authors: $authors,
                 tags: [$category],
             );
         }

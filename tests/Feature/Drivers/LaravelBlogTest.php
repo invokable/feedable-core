@@ -19,6 +19,8 @@ it('returns json feed', function (): void {
                     'title',
                     'summary',
                     'date_published',
+                    'tags',
+                    'authors',
                 ],
             ],
         ]);
