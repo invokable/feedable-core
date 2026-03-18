@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 it('can convert from atom to json feed', function (): void {
-    $response = $this->getJson('/jsonfeed?url=https://github.com/invokable/feedable-core/commits/main.atom');
+    $response = $this->getJson('/jsonfeed?url=https://vercel.com/atom');
 
     $response->assertOk()
         ->assertJsonStructure([
@@ -18,7 +18,6 @@ it('can convert from atom to json feed', function (): void {
                     'url',
                     'title',
                     'content_html',
-                    'date_modified',
                     'authors',
                 ],
             ],

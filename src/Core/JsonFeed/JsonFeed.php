@@ -365,7 +365,11 @@ class JsonFeed
             return null;
         }
 
-        return Carbon::parse($date)->toRfc3339String();
+        try {
+            return Carbon::parse($date)->toRfc3339String();
+        } catch (Exception) {
+            return null;
+        }
     }
 
     /**
