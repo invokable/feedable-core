@@ -4,3 +4,4 @@ composer.lock
 .idea
 build/
 /workbench/storage
+.ai/mcp/mcp.json
