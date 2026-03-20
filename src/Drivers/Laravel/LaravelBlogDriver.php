@@ -58,7 +58,8 @@ class LaravelBlogDriver implements FeedableDriver
     {
         /**
          * Laravel 13リリースに合わせてLivewireからInertiaに移行された。
-         * 記事データは<script data-page="app" type="application/json">内のJSONに含まれている。
+         * 記事データはInertiaの<script type="application/json">内のJSONに含まれている。
+         * Inertia v3ではdata-page属性が削除されるのでtype属性で探してprops.posts.dataの有無で判定。
          * props.posts.dataに記事の配列があり、各記事は以下のフィールドを持つ:
          * id, title, slug, excerpt, published_at_iso, category.name, authors[].name, image_url
          *
@@ -92,14 +93,19 @@ class LaravelBlogDriver implements FeedableDriver
             options: LIBXML_HTML_NOIMPLIED | LIBXML_NOERROR | HTML_NO_DEFAULT_NS
         );
 
-        // Inertiaのページデータを取得
-        $script = $dom->querySelector('script[data-page="app"]');
-        if (! $script) {
-            throw new Exception;
+        // Inertiaのページデータを取得。v3でdata-page属性が削除されるのでtype属性で探す。
+        $posts = [];
+        foreach ($dom->querySelectorAll('script[type="application/json"]') as $script) {
+            $pageData = json_decode($script->textContent, associative: true);
+            $posts = data_get($pageData, 'props.posts.data', []);
+            if ($posts) {
+                break;
+            }
         }
 
-        $pageData = json_decode($script->textContent, associative: true);
-        $posts = data_get($pageData, 'props.posts.data', []);
+        if (! $posts) {
+            throw new Exception;
+        }
         $items = [];
 
         foreach ($posts as $post) {
