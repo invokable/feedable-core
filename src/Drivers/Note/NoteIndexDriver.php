@@ -28,16 +28,11 @@ class NoteIndexDriver implements FeedableDriver
     public function __invoke(Format $format = Format::RSS): Responsable
     {
         try {
-            $cached = cache()->flexible(
+            $items = cache()->flexible(
                 'note-index-items',
                 [now()->plus(hours: 24), now()->plus(hours: 25)],
-                fn () => array_map(
-                    fn (FeedItem $item) => $item->toArray(),
-                    $this->handle(),
-                ),
+                fn () => $this->handle(),
             );
-
-            $items = array_map(FeedItem::fromArray(...), $cached);
         } catch (Exception $e) {
             return new ErrorResponse(
                 error: 'Whoops! Something went wrong.',
@@ -57,11 +52,12 @@ class NoteIndexDriver implements FeedableDriver
     public function handle(): array
     {
         // agent-browserで取得するサンプル。
+        // Salvager::agent()の返り値はvoidなので参照渡しで$htmlに入れる
         Salvager::agent(function (AgentBrowser $agent) use (&$html) {
             // ブラウザで開く
             $agent->open($this->baseUrl);
             // ページの読み込み完了を待つ
-            $agent->run('wait --load domcontentloaded');
+            $agent->run('wait --load networkidle');
 
             // HTMLを取得
             // agent-browserのアップデートで使い方が変わるのでCSSセレクタでの指定が安定。
