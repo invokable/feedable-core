@@ -6,10 +6,10 @@ namespace Revolution\Feedable\Drivers\Nintendo;
 
 use const Dom\HTML_NO_DEFAULT_NS;
 
+use Carbon\Carbon;
 use Dom\HTMLDocument;
 use Exception;
 use Illuminate\Contracts\Support\Responsable;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Illuminate\Support\Uri;

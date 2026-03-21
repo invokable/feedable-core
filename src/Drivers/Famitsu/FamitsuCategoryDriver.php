@@ -6,11 +6,11 @@ namespace Revolution\Feedable\Drivers\Famitsu;
 
 use const Dom\HTML_NO_DEFAULT_NS;
 
+use Carbon\Carbon;
 use Dom\HTMLDocument;
 use Exception;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;

@@ -6,12 +6,13 @@ namespace Revolution\Feedable\Drivers\Asahi;
 
 use const Dom\HTML_NO_DEFAULT_NS;
 
+use Carbon\Carbon;
+use Carbon\CarbonInterface;
 use Dom\HTMLDocument;
 use Dom\Node;
 use Exception;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Revolution\Feedable\Core\Contracts\FeedableDriver;
@@ -142,7 +143,7 @@ class AsahiNewsDriver implements FeedableDriver
      * 今日の記事: "10:00"
      * 昨日以前: "1/10 21:30"
      */
-    protected function parseDateTime(string $timeText, Carbon $now): Carbon
+    protected function parseDateTime(string $timeText, CarbonInterface $now): CarbonInterface
     {
         if (preg_match('/^(\d{1,2}):(\d{2})$/', $timeText, $matches)) {
             // 時間のみ = 今日

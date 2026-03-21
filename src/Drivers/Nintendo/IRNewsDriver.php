@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Revolution\Feedable\Drivers\Nintendo;
 
+use Carbon\Carbon;
 use Dom\Element;
 use Dom\XMLDocument;
 use Exception;
 use Illuminate\Contracts\Support\Responsable;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Uri;
 use Revolution\Feedable\Core\Contracts\FeedableDriver;

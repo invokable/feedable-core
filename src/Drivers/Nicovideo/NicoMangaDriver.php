@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Revolution\Feedable\Drivers\Nicovideo;
 
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Contracts\Support\Responsable;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;

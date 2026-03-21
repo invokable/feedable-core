@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Revolution\Feedable\Drivers\Yomiuri;
 
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Revolution\Feedable\Core\Contracts\FeedableDriver;
