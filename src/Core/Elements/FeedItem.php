@@ -60,8 +60,8 @@ class FeedItem implements Arrayable
             summary: $data['summary'] ?? null,
             image: $data['image'] ?? null,
             banner_image: $data['banner_image'] ?? null,
-            date_published: $data['date_published'] ?? null,
-            date_modified: $data['date_modified'] ?? null,
+            date_published: isset($data['date_published']) ? Carbon::parse($data['date_published']) : null,
+            date_modified: isset($data['date_modified']) ? Carbon::parse($data['date_modified']) : null,
             authors: $data['authors'] ?? null,
             tags: $data['tags'] ?? null,
             language: $data['language'] ?? null,
@@ -123,6 +123,7 @@ class FeedItem implements Arrayable
         return Collection::make(get_object_vars($this))
             ->except('extra')
             ->merge($this->extra)
+            ->map(fn ($value) => $value instanceof Carbon ? $value->toIso8601String() : $value)
             ->filter()
             ->toArray();
     }
