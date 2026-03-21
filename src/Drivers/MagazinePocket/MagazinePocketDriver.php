@@ -29,11 +29,16 @@ class MagazinePocketDriver implements FeedableDriver
     {
         try {
             // 0時更新なので翌日までキャッシュ
-            $items = cache()->remember(
+            $cached = cache()->remember(
                 'shonenmagazine-pocket-items',
                 today(Timezone::AsiaTokyo)->plus(days: 1),
-                fn () => $this->handle(),
+                fn () => array_map(
+                    fn (FeedItem $item) => $item->toArray(),
+                    $this->handle(),
+                ),
             );
+
+            $items = array_map(FeedItem::fromArray(...), $cached);
         } catch (Exception $e) {
             return new ErrorResponse(
                 error: 'Whoops! Something went wrong.',

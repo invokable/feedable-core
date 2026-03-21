@@ -31,11 +31,16 @@ class FateGoDriver implements FeedableDriver
         $this->category = $category->value;
 
         try {
-            $items = cache()->flexible(
+            $cached = cache()->flexible(
                 'fgo-news-items:'.$category->value,
                 [now()->plus(hours: 1), now()->plus(hours: 2)],
-                fn () => $this->handle(),
+                fn () => array_map(
+                    fn (FeedItem $item) => $item->toArray(),
+                    $this->handle(),
+                ),
             );
+
+            $items = array_map(FeedItem::fromArray(...), $cached);
         } catch (Exception $e) {
             return new ErrorResponse(
                 error: 'Whoops! Something went wrong.',

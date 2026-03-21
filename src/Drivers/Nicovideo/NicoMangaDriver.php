@@ -34,11 +34,16 @@ class NicoMangaDriver implements FeedableDriver
         try {
             // 1日中更新かつ更新量が多いのでキャッシュ時間は短め
             // それでも取りこぼす場合はカテゴリーごとに読むのを推奨。
-            $items = cache()->flexible(
+            $cached = cache()->flexible(
                 'nicovideo-manga-items:'.$this->category,
                 [now()->plus(minutes: 10), now()->plus(minutes: 20)],
-                fn () => $this->handle(),
+                fn () => array_map(
+                    fn (FeedItem $item) => $item->toArray(),
+                    $this->handle(),
+                ),
             );
+
+            $items = array_map(FeedItem::fromArray(...), $cached);
         } catch (Exception $e) {
             return new ErrorResponse(
                 error: 'Whoops! Something went wrong.',
