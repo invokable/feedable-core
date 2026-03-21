@@ -57,6 +57,8 @@ class LaravelBlogDriver implements FeedableDriver
     }
 
     /**
+     * @return array<FeedItem>
+     *
      * @throws Exception
      */
     public function handle(): array
@@ -95,7 +97,7 @@ class LaravelBlogDriver implements FeedableDriver
 
         $dom = HTMLDocument::createFromString(
             source: $response->body(),
-            options: LIBXML_HTML_NOIMPLIED | LIBXML_NOERROR | HTML_NO_DEFAULT_NS
+            options: LIBXML_HTML_NOIMPLIED | LIBXML_NOERROR | HTML_NO_DEFAULT_NS,
         );
 
         // Inertiaのページデータを取得。v3でdata-page属性が削除されるのでtype属性で探す。
