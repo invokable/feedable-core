@@ -118,7 +118,7 @@ class FamitsuCategoryDriver implements FeedableDriver
     /**
      * 記事詳細のjsonを取得。一度取得すればいいので長くキャッシュ
      */
-    protected function getArticle(array $item): FeedItem|array|null
+    protected function getArticle(array $item): ?array
     {
         return Cache::remember('famitsu_article_'.$this->buildId.'_'.data_get($item, 'articleId'),
             now()->plus(days: 7),
@@ -150,7 +150,8 @@ class FamitsuCategoryDriver implements FeedableDriver
                     date_published: data_get($item, 'pubDate'),
                     tags: data_get($item, 'categories'),
                 )->when($authors->isNotEmpty(), fn (FeedItem $feedItem) => $feedItem->set('authors', $authors->toArray()))
-                    ->when(filled($thumbnail), fn (FeedItem $feedItem) => $feedItem->tap(fn (FeedItem $item) => $item->image = $thumbnail));
+                    ->when(filled($thumbnail), fn (FeedItem $feedItem) => $feedItem->tap(fn (FeedItem $item) => $item->image = $thumbnail))
+                    ->toArray();
             });
     }
 

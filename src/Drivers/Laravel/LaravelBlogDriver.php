@@ -29,11 +29,16 @@ class LaravelBlogDriver implements FeedableDriver
     {
         try {
             // 不定期更新なので1時間だけキャッシュ
-            $items = cache()->flexible(
+            $cached = cache()->flexible(
                 'laravel-blog-items',
                 [now()->plus(hours: 1), now()->plus(hours: 2)],
-                fn () => $this->handle(),
+                fn () => array_map(
+                    fn (FeedItem $item) => $item->toArray(),
+                    $this->handle(),
+                ),
             );
+
+            $items = array_map(FeedItem::fromArray(...), $cached);
         } catch (Exception $e) {
             return new ErrorResponse(
                 error: 'Whoops! Something went wrong.',
@@ -52,6 +57,8 @@ class LaravelBlogDriver implements FeedableDriver
     }
 
     /**
+     * @return array<FeedItem>
+     *
      * @throws Exception
      */
     public function handle(): array
@@ -90,7 +97,7 @@ class LaravelBlogDriver implements FeedableDriver
 
         $dom = HTMLDocument::createFromString(
             source: $response->body(),
-            options: LIBXML_HTML_NOIMPLIED | LIBXML_NOERROR | HTML_NO_DEFAULT_NS
+            options: LIBXML_HTML_NOIMPLIED | LIBXML_NOERROR | HTML_NO_DEFAULT_NS,
         );
 
         // Inertiaのページデータを取得。v3でdata-page属性が削除されるのでtype属性で探す。

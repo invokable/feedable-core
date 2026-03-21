@@ -35,11 +35,16 @@ class YomiuriNewsDriver implements FeedableDriver
         $this->compact = $request->has('compact');
 
         try {
-            $items = cache()->flexible(
+            $cached = cache()->flexible(
                 'yomiuri-news-items',
                 [now()->plus(minutes: 10), now()->plus(minutes: 20)],
-                fn () => $this->handle(),
+                fn () => array_map(
+                    fn (FeedItem $item) => $item->toArray(),
+                    $this->handle(),
+                ),
             );
+
+            $items = array_map(FeedItem::fromArray(...), $cached);
         } catch (Exception $e) {
             return new ErrorResponse(
                 error: 'Whoops! Something went wrong.',

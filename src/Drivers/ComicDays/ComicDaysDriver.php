@@ -26,11 +26,16 @@ class ComicDaysDriver implements FeedableDriver
     {
         try {
             // 12時更新なので翌日までキャッシュ
-            $items = cache()->remember(
+            $cached = cache()->remember(
                 'comic-days-items',
                 today(Timezone::AsiaTokyo)->plus(days: 1, hours: 12),
-                fn () => $this->handle(),
+                fn () => array_map(
+                    fn (FeedItem $item) => $item->toArray(),
+                    $this->handle(),
+                ),
             );
+
+            $items = array_map(FeedItem::fromArray(...), $cached);
         } catch (Exception $e) {
             return new ErrorResponse(
                 error: 'Whoops! Something went wrong.',

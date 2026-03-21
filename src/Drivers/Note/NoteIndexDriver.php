@@ -28,11 +28,16 @@ class NoteIndexDriver implements FeedableDriver
     public function __invoke(Format $format = Format::RSS): Responsable
     {
         try {
-            $items = cache()->flexible(
+            $cached = cache()->flexible(
                 'note-index-items',
                 [now()->plus(hours: 24), now()->plus(hours: 25)],
-                fn () => $this->handle(),
+                fn () => array_map(
+                    fn (FeedItem $item) => $item->toArray(),
+                    $this->handle(),
+                ),
             );
+
+            $items = array_map(FeedItem::fromArray(...), $cached);
         } catch (Exception $e) {
             return new ErrorResponse(
                 error: 'Whoops! Something went wrong.',

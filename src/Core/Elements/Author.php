@@ -24,6 +24,15 @@ class Author implements Arrayable
         return new static($name, $url, $avatar);
     }
 
+    public static function fromArray(array $data): static
+    {
+        return new static(
+            name: $data['name'] ?? null,
+            url: $data['url'] ?? null,
+            avatar: $data['avatar'] ?? null,
+        );
+    }
+
     /**
      * Convert the object to an array.
      */

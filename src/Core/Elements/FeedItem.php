@@ -40,6 +40,43 @@ class FeedItem implements Arrayable
         //
     }
 
+    public static function fromArray(array $data): static
+    {
+        $known = [
+            'id', 'url', 'external_url', 'title',
+            'content_html', 'content_text', 'summary',
+            'image', 'banner_image',
+            'date_published', 'date_modified',
+            'authors', 'tags', 'language', 'attachments',
+        ];
+
+        $item = new static(
+            id: $data['id'] ?? '',
+            url: $data['url'] ?? null,
+            external_url: $data['external_url'] ?? null,
+            title: $data['title'] ?? null,
+            content_html: $data['content_html'] ?? null,
+            content_text: $data['content_text'] ?? null,
+            summary: $data['summary'] ?? null,
+            image: $data['image'] ?? null,
+            banner_image: $data['banner_image'] ?? null,
+            date_published: $data['date_published'] ?? null,
+            date_modified: $data['date_modified'] ?? null,
+            authors: $data['authors'] ?? null,
+            tags: $data['tags'] ?? null,
+            language: $data['language'] ?? null,
+            attachments: $data['attachments'] ?? null,
+        );
+
+        foreach ($data as $key => $value) {
+            if (! in_array($key, $known, true)) {
+                $item->extra[$key] = $value;
+            }
+        }
+
+        return $item;
+    }
+
     /**
      * Get property value with default.
      *
