@@ -57,7 +57,7 @@ class NoteIndexDriver implements FeedableDriver
             // ブラウザで開く
             $agent->open($this->baseUrl);
             // ページの読み込み完了を待つ
-            $agent->run('wait --load networkidle');
+            $agent->run('wait --load domcontentloaded');
 
             // HTMLを取得
             // agent-browserのアップデートで使い方が変わるのでCSSセレクタでの指定が安定。
@@ -75,6 +75,9 @@ class NoteIndexDriver implements FeedableDriver
 
         $crawler = new Crawler($html);
 
+        /**
+         * 「今日の注目記事」パート
+         */
         $items = $crawler->filter('section.m-horizontalScrollingList')
             ->first()
             ->filter('div.m-largeNoteWrapper__card')
