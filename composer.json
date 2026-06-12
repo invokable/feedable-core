@@ -22,6 +22,7 @@
         "pestphp/pest": "^4.1",
         "mockery/mockery": "^1.6",
         "pestphp/pest-plugin-laravel": "^4.0",
+        "laravel/pao": "^1.0",
         "revolution/laravel-boost-copilot-cli": "^2.0"
     },
     "autoload": {
@@ -55,13 +56,13 @@
     },
     "minimum-stability": "stable",
     "scripts": {
-        "test": "pest",
-        "test:coverage": "pest --coverage --coverage-clover build/logs/clover.xml",
+        "test": "pest --compact",
+        "test:coverage": "pest --compact --coverage --coverage-clover build/logs/clover.xml",
         "lint": [
-            "pint"
+            "pint --parallel"
         ],
         "test:lint": [
-            "pint --test"
+            "pint --parallel --test"
         ],
         "boost": "vendor/bin/testbench boost:install --no-interaction --ansi",
         "post-autoload-dump": [
