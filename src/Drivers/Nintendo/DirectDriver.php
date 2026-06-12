@@ -19,6 +19,7 @@ use Revolution\Feedable\Core\Enums\Format;
 use Revolution\Feedable\Core\Enums\Timezone;
 use Revolution\Feedable\Core\Response\ErrorResponse;
 use Revolution\Feedable\Core\Response\ResponseFactory;
+use Revolution\Feedable\Core\Support\AbsoluteUri;
 
 class DirectDriver implements FeedableDriver
 {
@@ -65,7 +66,7 @@ class DirectDriver implements FeedableDriver
 
         $redirect = HTMLDocument::createFromString(
             source: $response->body(),
-            options: LIBXML_HTML_NOIMPLIED | LIBXML_NOERROR | HTML_NO_DEFAULT_NS
+            options: LIBXML_HTML_NOIMPLIED | LIBXML_NOERROR | HTML_NO_DEFAULT_NS,
         );
         $refresh = $redirect->querySelector('meta[http-equiv="Refresh"]');
 
@@ -75,6 +76,8 @@ class DirectDriver implements FeedableDriver
             throw new Exception;
         }
         $link = $matches[1];
+
+        $link = AbsoluteUri::resolve('https://www.nintendo.com/', $link);
 
         // linkから日付
         // https://www.nintendo.com/jp/nintendo-direct/20250912/index.html
