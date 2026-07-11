@@ -77,7 +77,7 @@ class JsonFeed
     {
         $body = $this->convertEncoding($body);
         // エスケープされてない「&」を置換
-        $body = preg_replace('/&(?!#?[a-z0-9]+;)/', '&amp;', $body);
+        //$body = preg_replace('/&(?!#?[a-z0-9]+;)/', '&amp;', $body);
 
         $doc = XMLDocument::createFromString($body);
 
