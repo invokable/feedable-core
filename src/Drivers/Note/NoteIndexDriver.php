@@ -78,23 +78,28 @@ class NoteIndexDriver implements FeedableDriver
         /**
          * 「今日の注目記事」パート
          */
-        $items = $crawler->filter('section.m-horizontalScrollingList')
-            ->first()
-            ->filter('div.m-largeNoteWrapper__card')
+        $items = $crawler->filter('section')
+            ->eq(2)
+            ->filter('div.h-auto.shrink-0')
             ->each(function (Crawler $node) {
-                $title = $node->filter('h3')->text();
+                $title = $node->filter('h3');
+                if ($title->count() === 0) {
+                    return null;
+                }
+                $title = $title->text();
+
                 $link = $node->filter('a')->attr('href');
                 if (empty($link)) {
                     return null;
                 }
                 $link = AbsoluteUri::resolve($this->baseUrl, $link);
 
-                $image = $node->filter('img.m-thumbnail__image')->attr('src');
+                $image = $node->filter('img')->attr('src');
                 if (Str::startsWith($image, 'data:')) {
                     $image = null;
                 }
 
-                $author = $node->filter('span.o-verticalTimeLineNote__userText')->text();
+                $author = $node->filter('div.truncate')->text();
 
                 $date = $node->filter('time')->text();
                 // ○時間前、○日前、○年前などをCarbon::parse可能な英語に
