@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Revolution\Feedable\Core\Support;
 
 use Illuminate\Support\Str;
+use Illuminate\Support\Stringable;
 use League\Uri\Uri;
 use League\Uri\UriString;
 
@@ -39,6 +40,9 @@ class AbsoluteUri
     private static function normalize(?string $uri = null): string
     {
         $uri = Str::of($uri)
+            ->whenContains('http', function (Stringable $string) {
+                return $string->after('http')->prepend('http');
+            })
             ->stripTags()
             ->replaceMatches(self::REGEXP_INVALID_URI_RFC3987_CHARS, '')
             ->trim()
